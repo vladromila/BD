@@ -80,7 +80,7 @@ int main ()
       strcat(msgrasp, "Hello ");
       strcat(msgrasp, msg);
       
-      printf("[server]Trimitem mesajul inapoi...%s\n",msgrasp);
+      printf("[server]Doamne cat de bogat e serbanTrimitem mesajul inapoi...%s\n",msgrasp);
       
       
       /* returnam mesajul clientului */
