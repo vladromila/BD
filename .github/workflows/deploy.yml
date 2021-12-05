@@ -14,4 +14,4 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-          script: cd /root/BD/SERVER && gcc main.c -o server && pm2 restart all
+          script: cd /root/BD &&git pull origin master && cd SERVER && gcc main.c -o server && pm2 restart all
