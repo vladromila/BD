@@ -1,0 +1,17 @@
+name: Deploy server build
+ 
+on:
+  push:
+    branches: [ master ]
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connecting to the remote Drag'n'Drop server and running deployment scripts
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: cd /root/BD/SERVER && gcc main.c -o server && pm2 restart all

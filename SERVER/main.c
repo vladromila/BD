@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 /* portul folosit */
-#define PORT 2728
+#define PORT 3000
 
 /* codul de eroare returnat de anumite apeluri */
 extern int errno;
