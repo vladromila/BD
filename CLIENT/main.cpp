@@ -1,16 +1,21 @@
 #include <SFML/Graphics.hpp>
 #include "./src/sourceFiles/Command.cpp"
-
+#include "./src/sourceFiles/subcomponents/TextInput.cpp"
+#include<bits/stdc++.h>
 int main()
 {
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
     int W = sf::VideoMode::getDesktopMode().width - 100;
     int H = sf::VideoMode::getDesktopMode().height - 100;
-    sf::RenderWindow window(sf::VideoMode(W, H), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(W, H), "SFML works!",sf::Style::Default);
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
-    Point commandOrigin(550, 550);
+    Point commandOrigin(W*.125, 550);
     int rot = 0;
     Command c("filter", commandOrigin);
+
+    TextInput t(commandOrigin,"Enter your email address.");
     while (window.isOpen())
     {
 
@@ -39,9 +44,19 @@ int main()
             {
                 rot += 10;
                 c.rotate(rot);
+                t.onClick(sf::Vector2f(mousePos));
+            }
+            if(event.type==sf::Event::Resized)
+            {
+                    // sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                    // window.setView(sf::View(visibleArea));
+            }
+            if(event.type==sf::Event::TextEntered)
+            {
+                t.onTextEntered(event);
             }
         }
-        c.draw(window);
+        t.draw(window);
         window.display();
     }
 
