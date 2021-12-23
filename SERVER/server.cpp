@@ -48,7 +48,7 @@ int main()
 	memset(&serverAddr, '\0', sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(PORT);
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serverAddr.sin_addr.s_addr = inet_addr("0.0.0.o");
 
 	ret = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
 	if (ret < 0)
@@ -91,8 +91,8 @@ int main()
 				else
 				{
 					printf("Client: %s\n", buffer);
-					std::string res = requestHandler(buffer);
-					printf("%d\n", res.length());
+					std::string res=requestHandler(buffer);
+					printf("%d\n",res.length());
 					send(newSocket, res.c_str(), res.length(), 0);
 					bzero(buffer, sizeof(buffer));
 				}
