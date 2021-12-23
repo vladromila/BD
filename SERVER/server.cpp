@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "./src/globalHandler.cpp"
+#include "/usr/include/mysql/mysql.h"
 #define PORT 3002
 
 void sha256_string(char *string, char outputBuffer[65])
