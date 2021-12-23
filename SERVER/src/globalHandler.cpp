@@ -33,7 +33,7 @@ std::string login(std::string email, std::string password, MYSQL *con)
     sha256_string(password.c_str(), hashedPassword);
     char query[1024];
     int query_stat;
-    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", "asdasdasd", "asdasdads", password);
+    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%C')", "asdasdasd", "asdasdads", hashedPassword);
 
     query_stat = mysql_query(con, query);
     if (query_stat != 0)
