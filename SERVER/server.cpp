@@ -10,23 +10,50 @@
 #include "/usr/include/mysql/mysql.h"
 #define PORT 3002
 
-void sha256_string(char *string, char outputBuffer[65])
+struct connection_details
 {
-	unsigned char hash[SHA256_DIGEST_LENGTH];
-	SHA256_CTX sha256;
-	SHA256_Init(&sha256);
-	SHA256_Update(&sha256, string, strlen(string));
-	SHA256_Final(hash, &sha256);
-	int i = 0;
-	for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
+	const char *server, *user, *password, *database;
+};
+
+MYSQL *mysql_connection_setup(struct connection_details mysql_details)
+{
+	MYSQL *connection = mysql_init(NULL);
+
+	if (!mysql_real_connect(connection, mysql_details.server, mysql_details.user, mysql_details.password, mysql_details.database, 0, NULL, 0))
 	{
-		sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+		std::cout << "Connection Error: " << mysql_error(connection) << std::endl;
+		exit(1);
 	}
-	outputBuffer[64] = 0;
+
+	return connection;
+}
+
+MYSQL_RES *mysql_perform_query(MYSQL *connection, const char *sql_query)
+{
+	if (mysql_query(connection, sql_query))
+	{
+		std::cout << "MySQL Query Error: " << mysql_error(connection) << std::endl;
+		exit(1);
+	}
+
+	return mysql_use_result(connection);
 }
 
 int main()
 {
+	MYSQL *con;		// the connection
+	MYSQL_RES *res; // the results
+	MYSQL_ROW row;	// the results rows (array)
+
+	struct connection_details mysqlD;
+	mysqlD.server = "localhost"; // where the mysql database is
+	mysqlD.user = "vlad";		 // user
+	mysqlD.password = "bd2021";	 // the password for the database
+	mysqlD.database = "DDP";	 // the databse
+
+	// connect to the mysql database
+	con = mysql_connection_setup(mysqlD);
+
 	int sockfd, ret;
 	struct sockaddr_in serverAddr;
 
@@ -49,7 +76,7 @@ int main()
 	memset(&serverAddr, '\0', sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(PORT);
-	serverAddr.sin_addr.s_addr = htonl (INADDR_ANY);
+	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	ret = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
 	if (ret < 0)
@@ -92,8 +119,8 @@ int main()
 				else
 				{
 					printf("Client: %s\n", buffer);
-					std::string res=requestHandler(buffer);
-					printf("%d\n",res.length());
+					std::string res = requestHandler(buffer);
+					printf("%d\n", res.length());
 					send(newSocket, res.c_str(), res.length(), 0);
 					bzero(buffer, sizeof(buffer));
 				}
@@ -102,6 +129,10 @@ int main()
 	}
 
 	close(newSocket);
+
+	mysql_free_result(res);
+
+	mysql_close(con);
 
 	return 0;
 }
