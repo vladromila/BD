@@ -15,7 +15,7 @@ int main()
     int clientSocket, ret;
     struct sockaddr_in serverAddr;
     char buffer[1024];
-    
+
 
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket < 0)
@@ -28,7 +28,7 @@ int main()
     memset(&serverAddr, '\0', sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(PORT);
-    serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
+    serverAddr.sin_addr.s_addr = inet_addr("http://167.172.38.89");
 
     ret = connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
     if (ret < 0)
