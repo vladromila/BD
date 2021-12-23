@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "./src/globalHandler.cpp"
-#define PORT 3000
+#define PORT 3002
 
 void sha256_string(char *string, char outputBuffer[65])
 {

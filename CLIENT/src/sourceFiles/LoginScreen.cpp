@@ -12,7 +12,7 @@
 
 using json = nlohmann::json;
 
-#define PORT 3000
+#define PORT 3002
 
 LoginScreen::LoginScreen(int clientSocket)
 {
