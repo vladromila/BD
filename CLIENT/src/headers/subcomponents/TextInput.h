@@ -8,13 +8,20 @@ class TextInput
     Rectangle container;
     Point topLeftCorner;
     bool isSelected = false;
+    bool isSecuredTextEntry=false;
+    bool hasAddedIndicator=false;
+    bool hasRemovedIndicator=true;
     sf::Font font;
+    int width; 
+    int height;
+    int fontSize;
 
 public:
     TextInput();
-    TextInput(Point topLeftCorner,const char placeholder[]);
+    TextInput(Point topLeftCorner,int w,int h,int fontSize,const char placeholder[],bool securedTextEntry);
     void onTextEntered(sf::Event e);
-    void onClick(sf::Vector2f mousePos);
+    void onMousePress(sf::Vector2f mousePos);
     void draw(sf::RenderWindow &win);
     void updateText(char t[]);
+    char * getInputValue();
 };

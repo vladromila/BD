@@ -3,25 +3,45 @@
 TextInput::TextInput()
 {
 }
-TextInput::TextInput(Point topLeftCorner, const char placeholder[])
+TextInput::TextInput(Point topLeftCorner, int w, int h, int fontSize, const char placeholder[], bool securedTextEntry)
 {
     this->topLeftCorner.x = topLeftCorner.x;
     this->topLeftCorner.y = topLeftCorner.y;
-    int W = (sf::VideoMode::getDesktopMode().width - 100) * 0.75;
+    isSecuredTextEntry = securedTextEntry;
+    width = w;
+    height = h;
     Point containerOrigin(0, 0);
-    container = Rectangle(containerOrigin, W, 50);
+    container = Rectangle(containerOrigin, width, height);
     container.isTextInputContainer = true;
     strcpy(this->placeholder, placeholder);
-    strcpy(input, "_");
+    strcpy(input, "");
     font.loadFromFile("font.ttf");
+    this->fontSize = fontSize;
 }
 
-void TextInput::onClick(sf::Vector2f mousePos)
+void TextInput::onMousePress(sf::Vector2f mousePos)
 {
     if (container.isMouseOn(mousePos, topLeftCorner) == true)
+    {
         isSelected = true;
+        if (hasAddedIndicator == false)
+        {
+            strcat(input, "_");
+            hasAddedIndicator = true;
+            hasRemovedIndicator = false;
+        }
+    }
     else
+    {
         isSelected = false;
+        if (strlen(input) > 0 && input[strlen(input) - 1] == '_')
+            if (hasRemovedIndicator == false)
+            {
+                input[strlen(input) - 1] = '\0';
+                hasRemovedIndicator = true;
+                hasAddedIndicator = false;
+            }
+    }
 }
 
 void TextInput::onTextEntered(sf::Event e)
@@ -43,13 +63,16 @@ void TextInput::onTextEntered(sf::Event e)
             }
             else
             {
-
-                input[strlen(input) - 1] = tolower(char(charTyped));
-                strcat(input, "_");
+                if (char(charTyped) != '\n')
+                {
+                    input[strlen(input) - 1] = char(charTyped);
+                    strcat(input, "_");
+                }
             }
         }
     }
 }
+
 void TextInput::draw(sf::RenderWindow &win)
 {
     if (isSelected)
@@ -57,13 +80,38 @@ void TextInput::draw(sf::RenderWindow &win)
     else
         container.draw(topLeftCorner, 0, 1, win);
     sf::Text inputComponent;
-    inputComponent.setPosition(topLeftCorner.x + 20, topLeftCorner.y + 5);
-    inputComponent.setCharacterSize(30);
-    if (strcmp(input, "_") == 0 && isSelected == false)
+    inputComponent.setPosition(topLeftCorner.x + 20, topLeftCorner.y + (height - fontSize) * 0.35);
+    inputComponent.setCharacterSize(fontSize);
+    if (strcmp(input, "") == 0 && isSelected == false)
         inputComponent.setString(placeholder);
+    else if (isSecuredTextEntry)
+    {
+        char securedStr[100];
+        strcpy(securedStr, input);
+        for (int i = 0; i < strlen(securedStr) - 1; i++)
+        {
+            securedStr[i] = '*';
+        }
+        if (!isSelected)
+            securedStr[strlen(securedStr) - 1] = '*';
+        inputComponent.setString(securedStr);
+    }
     else
         inputComponent.setString(input);
     inputComponent.setFillColor(sf::Color::Black);
     inputComponent.setFont(font);
     win.draw(inputComponent);
+}
+
+char *TextInput::getInputValue()
+{
+    if (isSelected)
+    {
+        char  *cp;
+        strcpy(cp, input);
+        cp[strlen(cp) - 1] = '\0';
+        return cp;
+    }
+    else
+        return input;
 }
