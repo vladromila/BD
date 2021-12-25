@@ -111,6 +111,15 @@ std::string login(std::string email, std::string password, MYSQL *con)
 
 std::string registerUser(std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
 {
+    MYSQL_RES *dbRes;
+    char initial_query[1024];
+    int initial_query_stat;
+    sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
+
+    mysql_query(con,initial_query);
+    dbRes=mysql_store_result(con);
+
+    printf("%s\n",dbRes);
 
     json res = {
         {"success", false},
@@ -119,7 +128,6 @@ std::string registerUser(std::string email, std::string password, std::string pa
         {"lastNameError", ""},
         {"passwordError", ""},
         {"passwordConfirmError", ""}};
-
     bool isAnyError = false;
     if (!isEmailValid(email))
     {
@@ -150,38 +158,26 @@ std::string registerUser(std::string email, std::string password, std::string pa
         res["passwordConfirmError"] = "The passwords do not match.";
         isAnyError = true;
     }
-
-    char hashedPassword[65];
-    sha256_string(password.c_str(), hashedPassword);
-
-    char query[1024];
-    int query_stat;
-    sprintf(query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
-
-    MYSQL_RES *dbRes;
-    query_stat = mysql_query(con, query);
-    dbRes = mysql_store_result(con);
-    if (mysql_num_rows(dbRes) > 0)
-    {
-        res["email"] = "A user with this email address already exists.";
-        isAnyError = true;
-    }
     if (isAnyError == true)
     {
         return res.dump();
     }
 
-    bzero(query, 0);
-
+    char hashedPassword[65];
+    sha256_string(password.c_str(), hashedPassword);
+    char query[1024];
+    int query_stat;
     sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", firstName.c_str(), lastName.c_str(), hashedPassword);
 
     query_stat = mysql_query(con, query);
+
     if (query_stat != 0)
     {
 
         res["passwordConfirm"] = "Error creating a new user. Try again later.";
         return res.dump();
     }
+
     else
     {
         res["success"] = true;
