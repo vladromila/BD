@@ -48,6 +48,12 @@ void RegisterScreen::onMouseMove(sf::Vector2f mousePos)
 
 void RegisterScreen::onMousePress(sf::Vector2f mousePos)
 {
+    emailAddress.onMousePress(mousePos);
+    password.onMousePress(mousePos);
+    passwordConfirm.onMousePress(mousePos);
+    firstName.onMousePress(mousePos);
+    lastName.onMousePress(mousePos);
+
     if (registerButton.onMousePress(mousePos) == true)
     {
         emailAddress.resetError();
@@ -71,15 +77,17 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
 
         std::string reqStr = reqBody.dump();
         write(clientSocket, reqStr.c_str(), reqBody.dump().size() + 1);
+
         char res[1024];
         bzero(res, 1024);
         read(clientSocket, res, 1024);
         std::string resString;
         resString.append(res);
         json resJson = json::parse(resString);
-        printf("%s \n", resJson.dump().c_str());
+
         if (resJson["success"] == true)
         {
+            printf("works!\n");
         }
         else
         {
@@ -90,14 +98,9 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
             passwordConfirm.changeError(resJson["passwordConfirmError"]);
         }
     }
-    if (loginButton.onMousePress(mousePos) == true)
+    else if (loginButton.onMousePress(mousePos) == true)
     {
     }
-    emailAddress.onMousePress(mousePos);
-    password.onMousePress(mousePos);
-    passwordConfirm.onMousePress(mousePos);
-    firstName.onMousePress(mousePos);
-    lastName.onMousePress(mousePos);
 }
 
 void RegisterScreen::onTextEntered(sf::Event e)

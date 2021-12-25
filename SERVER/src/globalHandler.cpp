@@ -111,6 +111,15 @@ std::string login(std::string email, std::string password, MYSQL *con)
 
 std::string registerUser(std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
 {
+    MYSQL_RES *dbRes;
+    char initial_query[1024];
+    int initial_query_stat;
+    sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
+
+    mysql_query(con,initial_query);
+    dbRes=mysql_store_result(con);
+
+    printf("%s\n",dbRes);
 
     json res = {
         {"success", false},
@@ -119,33 +128,38 @@ std::string registerUser(std::string email, std::string password, std::string pa
         {"lastNameError", ""},
         {"passwordError", ""},
         {"passwordConfirmError", ""}};
+    bool isAnyError = false;
     if (!isEmailValid(email))
     {
         res["emailError"] = "Invalid email address format.";
-        return res.dump();
+        isAnyError = true;
     }
 
     if (firstName.size() < 4)
     {
         res["firstNameError"] = "The first name is too short.";
-        return res.dump();
+        isAnyError = true;
     }
 
     if (lastName.size() < 4)
     {
         res["lastNameError"] = "The last name is too short.";
-        return res.dump();
+        isAnyError = true;
     }
 
     if (password.size() < 4)
     {
         res["passwordError"] = "The entered password is too short.";
-        return res.dump();
+        isAnyError = true;
     }
 
     if (password != passwordConfirm)
     {
         res["passwordConfirmError"] = "The passwords do not match.";
+        isAnyError = true;
+    }
+    if (isAnyError == true)
+    {
         return res.dump();
     }
 
