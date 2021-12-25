@@ -65,7 +65,7 @@ std::string registerUser(std::string email, std::string password, std::string fi
     else
     {
         json res = {
-            {"success", true},
+            {"success", false},
             {"generalError", "Error creating a new user. Try again later."},
             {"emailError", "Error email lol."},
             {"passwordError", "Password error"}};
