@@ -143,7 +143,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
             return res.dump();
         }
         else
-            res.dump();
+            return res.dump();
     }
 
     if (firstName.size() < 4)
