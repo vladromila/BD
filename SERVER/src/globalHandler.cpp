@@ -162,7 +162,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
 
         mysql_query(con, initial_query);
         dbRes = mysql_store_result(con);
-
+        printf("nr e %d\n", mysql_num_rows(dbRes));
         if (mysql_num_rows(dbRes))
         {
             res["email"] = "A user with this email address already exists.";
