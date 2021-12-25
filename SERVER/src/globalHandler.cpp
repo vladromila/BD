@@ -140,7 +140,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
         {
 
             res["email"] = "A user with this email address already exists.";
-            isAnyError = true;
+            return res.dump();
         }
     }
 
