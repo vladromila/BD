@@ -150,6 +150,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
         res["passwordConfirm"] = "Error making the request. Please try again.";
         return res.dump();
     }
+    return "adkmafsdnofs";
     if (firstName.size() < 4)
     {
         res["firstNameError"] = "The first name is too short.";
