@@ -10,7 +10,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT 3002
+#define PORT 3000
 
 int main()
 {

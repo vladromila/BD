@@ -32,7 +32,7 @@ std::string login(std::string email, std::string password, MYSQL *con)
     query_stat = mysql_query(con, query);
     if (query_stat != 0)
     {
-        return "Eroare";
+        return "Eroareeeeee";
     }
 
     return password + " " + hashedPassword;

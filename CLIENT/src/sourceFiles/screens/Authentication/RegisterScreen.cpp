@@ -19,7 +19,7 @@ RegisterScreen::RegisterScreen(int clientSocket)
     emailAddress = TextInput(emailAdressOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false);
 
     Point firstNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.38);
-    firstName = TextInput(firstNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your first name.", true);
+    firstName = TextInput(firstNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your first name.", false);
 
     Point lastNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.46);
     lastName = TextInput(lastNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your last name.", false);
@@ -74,12 +74,18 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
     }
     emailAddress.onMousePress(mousePos);
     password.onMousePress(mousePos);
+    passwordConfirm.onMousePress(mousePos);
+    firstName.onMousePress(mousePos);
+    lastName.onMousePress(mousePos);
 }
 
 void RegisterScreen::onTextEntered(sf::Event e)
 {
     emailAddress.onTextEntered(e);
+    firstName.onTextEntered(e);
+    lastName.onTextEntered(e);
     password.onTextEntered(e);
+    passwordConfirm.onTextEntered(e);
 }
 
 void RegisterScreen::draw(sf::RenderWindow &win)
