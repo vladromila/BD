@@ -68,7 +68,10 @@ std::string registerUser(std::string email, std::string password, std::string fi
             {"success", false},
             {"generalError", "Error creating a new user. Try again later."},
             {"emailError", "Error email lol."},
-            {"passwordError", "Password error"}};
+            {"firstNameError", "Error email lol."},
+            {"lastNameError", "Error email lol."},
+            {"passwordError", "Error email lol."},
+            {"passwordConfirmError", "Password error"}};
         return res.dump();
     }
 }
