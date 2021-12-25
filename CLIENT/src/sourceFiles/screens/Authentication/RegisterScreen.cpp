@@ -60,13 +60,15 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
         std::string fn(firstName.getInputValue());
         std::string ln(lastName.getInputValue());
         std::string pass(password.getInputValue());
-
+        std::string passc(passwordConfirm.getInputValue());
         json reqBody = {
             {"reqType", "register"},
             {"email", email},
             {"firstName",fn},
             {"lastName",ln},
-            {"password", pass}};
+            {"password", pass},
+            {"passwordConfirm", passc}
+            };
 
         std::string reqStr=reqBody.dump();
         write(clientSocket,reqStr.c_str(),reqBody.dump().size()+1);

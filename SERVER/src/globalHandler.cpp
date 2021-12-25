@@ -109,15 +109,8 @@ std::string login(std::string email, std::string password, MYSQL *con)
     }
 }
 
-std::string registerUser(std::string email, std::string password, std::string firstName, std::string lastName, MYSQL *con)
+std::string registerUser(std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
 {
-    char hashedPassword[65];
-    sha256_string(password.c_str(), hashedPassword);
-    char query[1024];
-    int query_stat;
-    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", firstName.c_str(), lastName.c_str(), hashedPassword);
-
-    query_stat = mysql_query(con, query);
 
     json res = {
         {"success", NULL},
@@ -132,15 +125,50 @@ std::string registerUser(std::string email, std::string password, std::string fi
         res["emailError"] = "Invalid email address format.";
         return res.dump();
     }
-    if (query_stat != 0)
+
+    if (firstName.size() < 4)
     {
-        json res = {
-            {"success", false},
-            {"generalError", "Error creating a new user. Try again later."}};
+        res["firstNameError"] = "The first name is too short.";
         return res.dump();
     }
+
+    if (lastName.size() < 4)
+    {
+        res["lastNameError"] = "The last name is too short.";
+        return res.dump();
+    }
+
+    if (password.size() < 4)
+    {
+        res["passwordError"] = "The entered password is too short.";
+        return res.dump();
+    }
+
+    if (password != passwordConfirm)
+    {
+        res["passwordConfirmError"] = "The passwords do not match.";
+        return res.dump();
+    }
+
+    char hashedPassword[65];
+    sha256_string(password.c_str(), hashedPassword);
+    char query[1024];
+    int query_stat;
+    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", firstName.c_str(), lastName.c_str(), hashedPassword);
+
+    query_stat = mysql_query(con, query);
+
+    if (query_stat != 0)
+    {
+
+        res["generalError"] = "Error creating a new user. Try again later.";
+        return res.dump();
+    }
+
     else
     {
+        res["success"] = true;
+        return res.dump();
     }
 }
 
@@ -159,6 +187,6 @@ std::string requestHandler(char *r, MYSQL *con)
         if (req["reqType"] == "login")
             return login(req["email"], req["password"], con);
         else if (req["reqType"] == "register")
-            return registerUser(req["email"], req["password"], req["firstName"], req["lastName"], con);
+            return registerUser(req["email"], req["password"], req["passwordConfirm"], req["firstName"], req["lastName"], con);
     }
 }
