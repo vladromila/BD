@@ -111,15 +111,6 @@ std::string login(std::string email, std::string password, MYSQL *con)
 
 std::string registerUser(std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
 {
-    MYSQL_RES *dbRes;
-    char initial_query[1024];
-    int initial_query_stat;
-    sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
-
-    mysql_query(con,initial_query);
-    dbRes=mysql_store_result(con);
-
-    printf("%s\n",dbRes);
 
     json res = {
         {"success", false},
@@ -161,6 +152,22 @@ std::string registerUser(std::string email, std::string password, std::string pa
     if (isAnyError == true)
     {
         return res.dump();
+    }
+    else
+    {
+        MYSQL_RES *dbRes;
+        char initial_query[1024];
+        int initial_query_stat;
+        sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
+
+        mysql_query(con, initial_query);
+        dbRes = mysql_store_result(con);
+
+        if (mysql_num_rows(dbRes))
+        {
+            res["email"] = "A user with this email address already exists.";
+            return res.dump();
+        }
     }
 
     char hashedPassword[65];
