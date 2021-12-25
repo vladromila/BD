@@ -127,21 +127,21 @@ std::string registerUser(std::string email, std::string password, std::string pa
         isAnyError = true;
     }
 
-    MYSQL_RES *dbRes;
-    char initial_query[1024];
-    int initial_query_stat;
-    // sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
+    // MYSQL_RES *dbRes;
+    // char initial_query[1024];
+    // int initial_query_stat;
+    // // sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
 
-    mysql_query(con, "SELECT firstName FROM users WHERE firstName='romilavlad2001@gmail.com';");
-    dbRes = mysql_store_result(con);
-    if (mysql_num_rows(dbRes))
-    {
+    // mysql_query(con, "SELECT firstName FROM users WHERE firstName='romilavlad2001@gmail.com';");
+    // dbRes = mysql_store_result(con);
+    // if (mysql_num_rows(dbRes))
+    // {
 
-        res["email"] = "A user with this email address already exists.";
-        return res.dump();
-    }
-    else
-        return res.dump();
+    //     res["email"] = "A user with this email address already exists.";
+    //     return res.dump();
+    // }
+    // else
+    //     return res.dump();
 
     if (firstName.size() < 4)
     {
