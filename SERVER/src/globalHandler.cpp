@@ -20,14 +20,39 @@ void sha256_string(const char *string, char outputBuffer[65])
     outputBuffer[64] = 0;
 }
 
-
 std::string login(std::string email, std::string password, MYSQL *con)
 {
     char hashedPassword[65];
     sha256_string(password.c_str(), hashedPassword);
     char query[1024];
     int query_stat;
-    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", email.c_str(),password.c_str(), hashedPassword);
+    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", email.c_str(), password.c_str(), hashedPassword);
+
+    query_stat = mysql_query(con, query);
+
+    if (query_stat != 0)
+    {
+        json res = {
+            {"success", false},
+            {"generalError", "Error creating a new user. Try again later."}};
+        return res.dump();
+    }
+    else
+    {
+        json res = {
+            {"success", true},
+        };
+        return res.dump();
+    }
+}
+
+std::string registerUser(std::string email, std::string password, std::string firstName, std::string lastName, MYSQL *con)
+{
+    char hashedPassword[65];
+    sha256_string(password.c_str(), hashedPassword);
+    char query[1024];
+    int query_stat;
+    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", firstName.c_str(), lastName.c_str(), hashedPassword);
 
     query_stat = mysql_query(con, query);
     if (query_stat != 0)
@@ -48,7 +73,11 @@ std::string requestHandler(char *r, MYSQL *con)
         std::string res = "rip";
         return res;
     }
-    else if (req["reqType"] == "login")
-        return login(req["email"], req["password"], con);
-    return "";
+    else
+    {
+        if (req["reqType"] == "login")
+            return login(req["email"], req["password"], con);
+        else if (req["reqType"] == "register")
+            return registerUser(req["email"], req["password"], req["firstName"], req["lastName"], con);
+    }
 }

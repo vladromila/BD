@@ -28,7 +28,7 @@ RegisterScreen::RegisterScreen(int clientSocket)
     password = TextInput(passwordOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your password.", true);
 
     Point passwordConfirmOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.62);
-    passwordConfirm = TextInput(passwordConfirmOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Confirm the password.", false);
+    passwordConfirm = TextInput(passwordConfirmOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Confirm the password.", true);
 
     Point registerButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.45, sf::VideoMode::getDesktopMode().height * 0.70);
     registerButton = Button(registerButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.1, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.03, "Register");
@@ -64,10 +64,10 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
 
         std::string reqStr=reqBody.dump();
         write(clientSocket,reqStr.c_str(),reqBody.dump().size()+1);
-        char res[1024];
-        bzero(res, 1024);
-        read(clientSocket, res, 1024);
-        printf("%s\n", res);
+        // char res[1024];
+        // bzero(res, 1024);
+        // read(clientSocket, res, 1024);
+        // printf("%s\n", res);
     }
     if (loginButton.onMousePress(mousePos) == true)
     {
