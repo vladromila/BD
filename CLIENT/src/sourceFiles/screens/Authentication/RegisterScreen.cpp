@@ -64,51 +64,30 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
         json reqBody = {
             {"reqType", "register"},
             {"email", email},
-            {"firstName",fn},
-            {"lastName",ln},
+            {"firstName", fn},
+            {"lastName", ln},
             {"password", pass},
-            {"passwordConfirm", passc}
-            };
+            {"passwordConfirm", passc}};
 
-        std::string reqStr=reqBody.dump();
-        write(clientSocket,reqStr.c_str(),reqBody.dump().size()+1);
+        std::string reqStr = reqBody.dump();
+        write(clientSocket, reqStr.c_str(), reqBody.dump().size() + 1);
         char res[1024];
         bzero(res, 1024);
         read(clientSocket, res, 1024);
         std::string resString;
         resString.append(res);
-        json resJson=json::parse(resString);
-        printf("%s \n",resJson.dump().c_str());
-        if(resJson["success"]==true)
+        json resJson = json::parse(resString);
+        printf("%s \n", resJson.dump().c_str());
+        if (resJson["success"] == true)
         {
-
         }
         else
         {
-            if(resJson["generalError"]!="")
-            {
-                passwordConfirm.changeError(resJson["generalError"]);
-            }
-            if(resJson["emailError"]!="")
-            {
-                emailAddress.changeError(resJson["emailError"]);
-            }
-            if(resJson["firstNameError"]!="")
-            {
-                firstName.changeError(resJson["firstNameError"]);
-            }
-            if(resJson["lastNameError"]!="")
-            {
-                lastName.changeError(resJson["lastNameError"]);
-            }
-            if(resJson["passwordError"]!="")
-            {
-                password.changeError(resJson["passwordError"]);
-            }
-            if(resJson["passwordConfirmError"]!="")
-            {
-                passwordConfirm.changeError(resJson["passwordConfirmError"]);
-            }
+            emailAddress.changeError(resJson["emailError"]);
+            firstName.changeError(resJson["firstNameError"]);
+            lastName.changeError(resJson["lastNameError"]);
+            password.changeError(resJson["passwordError"]);
+            passwordConfirm.changeError(resJson["passwordConfirmError"]);
         }
     }
     if (loginButton.onMousePress(mousePos) == true)

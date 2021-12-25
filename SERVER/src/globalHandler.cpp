@@ -113,8 +113,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
 {
 
     json res = {
-        {"success", NULL},
-        {"generalError", ""},
+        {"success", false},
         {"emailError", ""},
         {"firstNameError", ""},
         {"lastNameError", ""},
@@ -161,7 +160,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
     if (query_stat != 0)
     {
 
-        res["generalError"] = "Error creating a new user. Try again later.";
+        res["passwordConfirm"] = "Error creating a new user. Try again later.";
         return res.dump();
     }
 
