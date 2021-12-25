@@ -127,20 +127,6 @@ std::string registerUser(std::string email, std::string password, std::string pa
         isAnyError = true;
     }
 
-    char query[1024];
-    int query_stat;
-    sprintf(query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
-
-    MYSQL_RES *dbRes;
-    query_stat = mysql_query(con, query);
-    dbRes = mysql_store_result(con);
-    if (mysql_num_rows(dbRes) > 0)
-    {
-        res["email"] = "A user with this email address already exists.";
-        return res.dump();
-    }
-    bzero(query,0);
-
     if (firstName.size() < 4)
     {
         res["firstNameError"] = "The first name is too short.";
@@ -164,13 +150,28 @@ std::string registerUser(std::string email, std::string password, std::string pa
         res["passwordConfirmError"] = "The passwords do not match.";
         isAnyError = true;
     }
+
+    char hashedPassword[65];
+    sha256_string(password.c_str(), hashedPassword);
+
+    char query[1024];
+    int query_stat;
+    sprintf(query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
+
+    MYSQL_RES *dbRes;
+    query_stat = mysql_query(con, query);
+    dbRes = mysql_store_result(con);
+    if (mysql_num_rows(dbRes) > 0)
+    {
+        res["email"] = "A user with this email address already exists.";
+        isAnyError = true;
+    }
     if (isAnyError == true)
     {
         return res.dump();
     }
 
-    char hashedPassword[65];
-    sha256_string(password.c_str(), hashedPassword);
+    bzero(query, 0);
 
     sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", firstName.c_str(), lastName.c_str(), hashedPassword);
 
@@ -181,7 +182,6 @@ std::string registerUser(std::string email, std::string password, std::string pa
         res["passwordConfirm"] = "Error creating a new user. Try again later.";
         return res.dump();
     }
-
     else
     {
         res["success"] = true;
