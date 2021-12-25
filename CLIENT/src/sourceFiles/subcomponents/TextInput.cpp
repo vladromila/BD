@@ -101,17 +101,39 @@ void TextInput::draw(sf::RenderWindow &win)
     inputComponent.setFillColor(sf::Color::Black);
     inputComponent.setFont(font);
     win.draw(inputComponent);
+
+    sf::Text errorMessageComponent;
+    errorMessageComponent.setPosition(topLeftCorner.x, topLeftCorner.y + height + fontSize / 5);
+    errorMessageComponent.setCharacterSize(fontSize / 2);
+
+    errorMessageComponent.setString(errorMessage);
+    errorMessageComponent.setFillColor(sf::Color::Red);
+    errorMessageComponent.setFont(font);
+
+    errorMessageComponent.setFillColor(sf::Color::Red);
+    errorMessageComponent.setFont(font);
+    win.draw(errorMessageComponent);
 }
 
 char *TextInput::getInputValue()
 {
     if (isSelected)
     {
-        char  *cp;
+        char *cp;
         strcpy(cp, input);
         cp[strlen(cp) - 1] = '\0';
         return cp;
     }
     else
         return input;
+}
+
+void TextInput::resetError()
+{
+    errorMessage = "";
+}
+
+void TextInput::changeError(std::string err)
+{
+    errorMessage = err;
 }

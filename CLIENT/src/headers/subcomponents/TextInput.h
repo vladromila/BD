@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <bits/stdc++.h>
 #include "../../sourceFiles/subcomponents/Rectangle.cpp"
 #include "../../utils/GlobalVariables.h"
 class TextInput
@@ -16,6 +17,8 @@ class TextInput
     int height;
     int fontSize;
 
+    std::string errorMessage="";
+
 public:
     TextInput();
     TextInput(Point topLeftCorner,int w,int h,int fontSize,const char placeholder[],bool securedTextEntry);
@@ -24,4 +27,6 @@ public:
     void draw(sf::RenderWindow &win);
     void updateText(char t[]);
     char * getInputValue();
+    void resetError();
+    void changeError(std::string err);
 };

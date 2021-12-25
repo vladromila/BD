@@ -15,24 +15,24 @@ using json = nlohmann::json;
 RegisterScreen::RegisterScreen(int clientSocket)
 {
     this->clientSocket = clientSocket;
-    Point emailAdressOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.30);
+    Point emailAdressOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.25);
     emailAddress = TextInput(emailAdressOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false);
 
-    Point firstNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.38);
+    Point firstNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.35);
     firstName = TextInput(firstNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your first name.", false);
 
-    Point lastNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.46);
+    Point lastNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.45);
     lastName = TextInput(lastNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your last name.", false);
 
-    Point passwordOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.54);
+    Point passwordOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.55);
     password = TextInput(passwordOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your password.", true);
 
-    Point passwordConfirmOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.62);
+    Point passwordConfirmOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.65);
     passwordConfirm = TextInput(passwordConfirmOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Confirm the password.", true);
 
-    Point registerButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.45, sf::VideoMode::getDesktopMode().height * 0.70);
+    Point registerButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.45, sf::VideoMode::getDesktopMode().height * 0.75);
     registerButton = Button(registerButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.1, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.03, "Register");
-    Point loginButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.46, sf::VideoMode::getDesktopMode().height * 0.76);
+    Point loginButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.46, sf::VideoMode::getDesktopMode().height * 0.83);
     loginButton = Button(loginButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.08, sf::VideoMode::getDesktopMode().height * 0.03, sf::VideoMode::getDesktopMode().height * 0.023, "Login");
     bgImageTexture.loadFromFile("bg.png");
 
@@ -67,7 +67,38 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
         char res[1024];
         bzero(res, 1024);
         read(clientSocket, res, 1024);
-        printf("%s\n", res);
+        json resJson=json::parse(res);
+        if(resJson["success"]==true)
+        {
+
+        }
+        else
+        {
+            if(resJson["generalError"])
+            {
+                passwordConfirm.changeError(resJson["generalError"]);
+            }
+            if(resJson["emailError"])
+            {
+                emailAddress.changeError(resJson["generalError"]);
+            }
+            if(resJson["firstNameError"])
+            {
+                firstName.changeError(resJson["generalError"]);
+            }
+            if(resJson["lastNameError"])
+            {
+                lastName.changeError(resJson["generalError"]);
+            }
+            if(resJson["passwordError"])
+            {
+                password.changeError(resJson["generalError"]);
+            }
+            if(resJson["passwordConfirmError"])
+            {
+                passwordConfirm.changeError(resJson["generalError"]);
+            }
+        }
     }
     if (loginButton.onMousePress(mousePos) == true)
     {
