@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include "./src/globalHandler.cpp"
 #include "/usr/include/mysql/mysql.h"
-#define PORT 3002
+#define PORT 3000
 
 struct connection_details
 {

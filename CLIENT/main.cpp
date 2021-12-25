@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "./src/sourceFiles/LoginScreen.cpp"
+#include "./src/sourceFiles/screens/Authentication/RegisterScreen.cpp"
 #include <bits/stdc++.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +9,8 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#define PORT 3002
 
 int main()
 {
@@ -47,7 +49,7 @@ int main()
     shape.setFillColor(sf::Color::Green);
     Point commandOrigin(W * .125, 550);
     int rot = 0;
-    LoginScreen loginScreen(clientSocket);
+    RegisterScreen loginScreen(clientSocket);
     while (window.isOpen())
     {
 

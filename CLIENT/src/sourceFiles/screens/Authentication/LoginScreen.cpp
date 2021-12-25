@@ -1,4 +1,4 @@
-#include "../headers/LoginScreen.h"
+#include "../../../headers/screens/Authentication/LoginScreen.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,8 +11,6 @@
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
-
-#define PORT 3002
 
 LoginScreen::LoginScreen(int clientSocket)
 {
