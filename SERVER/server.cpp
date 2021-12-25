@@ -121,7 +121,7 @@ int main()
 					printf("Client: %s\n", buffer);
 					std::string res = requestHandler(buffer,con);
 					printf("%d\n", res.length());
-					send(newSocket, res.c_str(), res.length(), 0);
+					send(newSocket, res.c_str(), res.size()+1, 0);
 					bzero(buffer, sizeof(buffer));
 				}
 			}

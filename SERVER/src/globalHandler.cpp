@@ -127,7 +127,7 @@ std::string registerUser(std::string email, std::string password, std::string fi
         {"lastNameError", ""},
         {"passwordError", ""},
         {"passwordConfirmError", ""}};
-    if (isEmailValid(email))
+    if (!isEmailValid(email))
     {
         res["emailError"] = "Invalid email address format.";
         return res.dump();
