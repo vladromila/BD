@@ -56,7 +56,7 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
         std::string pass(password.getInputValue());
 
         json reqBody = {
-            {"reqType", "login"},
+            {"reqType", "register"},
             {"email", email},
             {"firstName",fn},
             {"lastName",ln},
@@ -64,10 +64,10 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
 
         std::string reqStr=reqBody.dump();
         write(clientSocket,reqStr.c_str(),reqBody.dump().size()+1);
-        // char res[1024];
-        // bzero(res, 1024);
-        // read(clientSocket, res, 1024);
-        // printf("%s\n", res);
+        char res[1024];
+        bzero(res, 1024);
+        read(clientSocket, res, 1024);
+        printf("%s\n", res);
     }
     if (loginButton.onMousePress(mousePos) == true)
     {

@@ -57,10 +57,18 @@ std::string registerUser(std::string email, std::string password, std::string fi
     query_stat = mysql_query(con, query);
     if (query_stat != 0)
     {
-        return "Eroareeeeee";
+        json res = {
+            {"success", false},
+            {"generalError", "Error creating a new user. Try again later."}};
+        return res.dump();
     }
-
-    return password + " " + hashedPassword;
+    else
+    {
+        json res = {
+            {"success", true},
+        };
+        return res.dump();
+    }
 }
 
 std::string requestHandler(char *r, MYSQL *con)
