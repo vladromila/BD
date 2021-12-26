@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "../sourceFiles/subcomponents/TextInput.cpp"
 #include "../sourceFiles/subcomponents/Button.cpp"
+#include "../sourceFiles/subcomponents/Word.cpp"
 
 class LoginScreen
 {
@@ -12,6 +13,8 @@ class LoginScreen
     TextInput password;
     Button loginButton;
     Button registerButton;
+
+    Word title;
     sf::Texture bgImageTexture;
 
     sf::Sprite bgImage;

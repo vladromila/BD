@@ -111,15 +111,6 @@ std::string login(std::string email, std::string password, MYSQL *con)
 
 std::string registerUser(std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
 {
-    MYSQL_RES *dbRes;
-    char initial_query[1024];
-    int initial_query_stat;
-    sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
-
-    mysql_query(con,initial_query);
-    dbRes=mysql_store_result(con);
-
-    printf("%s\n",dbRes);
 
     json res = {
         {"success", false},
@@ -133,6 +124,22 @@ std::string registerUser(std::string email, std::string password, std::string pa
     {
         res["emailError"] = "Invalid email address format.";
         isAnyError = true;
+    }
+    else
+    {
+        MYSQL_RES *dbRes;
+        char initial_query[1024];
+        int initial_query_stat;
+        sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
+
+        mysql_query(con, initial_query);
+        dbRes = mysql_store_result(con);
+
+        if (mysql_num_rows(dbRes))
+        {
+            res["emailError"] = "A user with this email address already exists.";
+            return res.dump();
+        }
     }
 
     if (firstName.size() < 4)
@@ -168,16 +175,12 @@ std::string registerUser(std::string email, std::string password, std::string pa
     char query[1024];
     int query_stat;
     sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", firstName.c_str(), lastName.c_str(), hashedPassword);
-
     query_stat = mysql_query(con, query);
-
     if (query_stat != 0)
     {
-
         res["passwordConfirm"] = "Error creating a new user. Try again later.";
         return res.dump();
     }
-
     else
     {
         res["success"] = true;
@@ -187,13 +190,15 @@ std::string registerUser(std::string email, std::string password, std::string pa
 
 std::string requestHandler(char *r, MYSQL *con)
 {
+    json failedRequest = {
+        {"success", false}};
+
     std::string request;
     request.append(r);
     json req = json::parse(request, nullptr, true);
     if (req.is_discarded())
     {
-        std::string res = "rip";
-        return res;
+        return failedRequest.dump();
     }
     else
     {
@@ -201,5 +206,9 @@ std::string requestHandler(char *r, MYSQL *con)
             return login(req["email"], req["password"], con);
         else if (req["reqType"] == "register")
             return registerUser(req["email"], req["password"], req["passwordConfirm"], req["firstName"], req["lastName"], con);
+        else
+        {
+            return failedRequest.dump();
+        }
     }
 }

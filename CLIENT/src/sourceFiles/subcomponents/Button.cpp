@@ -1,3 +1,6 @@
+#ifndef BUTTON_H
+#define BUTTON_H
+
 #include "../../headers/subcomponents/Button.h"
 
 Button::Button()
@@ -51,3 +54,5 @@ void Button::draw(sf::RenderWindow &win)
                                textRect.top + textRect.height / 2.0f);
     win.draw(btnTextComponent);
 }
+
+#endif

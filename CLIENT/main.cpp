@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "./src/sourceFiles/screens/Authentication/RegisterScreen.cpp"
+#include "./src/sourceFiles/screens/Authentication/Authentication.cpp"
 #include <bits/stdc++.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +30,9 @@ int main()
     memset(&serverAddr, '\0', sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(PORT);
-    serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
+    // serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
+        serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
 
     ret = connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
     if (ret < 0)
@@ -49,7 +51,7 @@ int main()
     shape.setFillColor(sf::Color::Green);
     Point commandOrigin(W * .125, 550);
     int rot = 0;
-    RegisterScreen loginScreen(clientSocket);
+    Authentication loginScreen(clientSocket);
     while (window.isOpen())
     {
 

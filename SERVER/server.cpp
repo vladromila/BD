@@ -28,17 +28,6 @@ MYSQL *mysql_connection_setup(struct connection_details mysql_details)
 	return connection;
 }
 
-MYSQL_RES *mysql_perform_query(MYSQL *connection, const char *sql_query)
-{
-	if (mysql_query(connection, sql_query))
-	{
-		std::cout << "MySQL Query Error: " << mysql_error(connection) << std::endl;
-		exit(1);
-	}
-
-	return mysql_use_result(connection);
-}
-
 int main()
 {
 	MYSQL *con;		// the connection
@@ -51,8 +40,8 @@ int main()
 	mysqlD.password = "bd2021";	 // the password for the database
 	mysqlD.database = "DDP";	 // the databse
 
-	// connect to the mysql database
 	con = mysql_connection_setup(mysqlD);
+	printf("[+]Server connected to the database.\n");
 
 	int sockfd, ret;
 	struct sockaddr_in serverAddr;
@@ -119,9 +108,8 @@ int main()
 				else
 				{
 					printf("Client: %s\n", buffer);
-					std::string res = requestHandler(buffer,con);
-					printf("%d\n", res.length());
-					send(newSocket, res.c_str(), res.size()+1, 0);
+					std::string res = requestHandler(buffer, con);
+					send(newSocket, res.c_str(), res.size() + 1, 0);
 					bzero(buffer, sizeof(buffer));
 				}
 			}

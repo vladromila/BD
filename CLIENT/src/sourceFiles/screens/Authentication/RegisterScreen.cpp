@@ -12,28 +12,37 @@
 
 using json = nlohmann::json;
 
+RegisterScreen::RegisterScreen(){
+    
+}
+
 RegisterScreen::RegisterScreen(int clientSocket)
 {
     this->clientSocket = clientSocket;
-    Point emailAdressOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.25);
+    Point emailAdressOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.30);
     emailAddress = TextInput(emailAdressOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false);
 
-    Point firstNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.34);
+    Point firstNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.39);
     firstName = TextInput(firstNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your first name.", false);
 
-    Point lastNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.43);
+    Point lastNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.48);
     lastName = TextInput(lastNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your last name.", false);
 
-    Point passwordOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.52);
+    Point passwordOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.57);
     password = TextInput(passwordOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your password.", true);
 
-    Point passwordConfirmOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.61);
+    Point passwordConfirmOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.66);
     passwordConfirm = TextInput(passwordConfirmOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Confirm the password.", true);
 
-    Point registerButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.45, sf::VideoMode::getDesktopMode().height * 0.70);
+    Point registerButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.45, sf::VideoMode::getDesktopMode().height * 0.75);
     registerButton = Button(registerButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.1, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.03, "Register");
-    Point loginButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.46, sf::VideoMode::getDesktopMode().height * 0.78);
+    Point loginButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.46, sf::VideoMode::getDesktopMode().height * 0.81);
     loginButton = Button(loginButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.08, sf::VideoMode::getDesktopMode().height * 0.03, sf::VideoMode::getDesktopMode().height * 0.023, "Login");
+
+    Point titleOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.505, sf::VideoMode::getDesktopMode().height * 0.24);
+
+    title = Word(titleOrigin,sf::VideoMode::getDesktopMode().height * 0.08,"Register");
+
     bgImageTexture.loadFromFile("bg.png");
 
     bgImage = sf::Sprite(bgImageTexture);
@@ -48,6 +57,11 @@ void RegisterScreen::onMouseMove(sf::Vector2f mousePos)
 
 void RegisterScreen::onMousePress(sf::Vector2f mousePos)
 {
+    emailAddress.onMousePress(mousePos);
+    password.onMousePress(mousePos);
+    passwordConfirm.onMousePress(mousePos);
+    firstName.onMousePress(mousePos);
+    lastName.onMousePress(mousePos);
     if (registerButton.onMousePress(mousePos) == true)
     {
         emailAddress.resetError();
@@ -93,11 +107,6 @@ void RegisterScreen::onMousePress(sf::Vector2f mousePos)
     if (loginButton.onMousePress(mousePos) == true)
     {
     }
-    emailAddress.onMousePress(mousePos);
-    password.onMousePress(mousePos);
-    passwordConfirm.onMousePress(mousePos);
-    firstName.onMousePress(mousePos);
-    lastName.onMousePress(mousePos);
 }
 
 void RegisterScreen::onTextEntered(sf::Event e)
@@ -120,4 +129,5 @@ void RegisterScreen::draw(sf::RenderWindow &win)
 
     loginButton.draw(win);
     registerButton.draw(win);
+    title.draw(win);
 }

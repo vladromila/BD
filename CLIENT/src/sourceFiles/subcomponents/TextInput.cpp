@@ -1,3 +1,5 @@
+#ifndef TEXTINPUT_H
+#define TEXTINPUT_H
 #include "../../headers/subcomponents/TextInput.h"
 
 TextInput::TextInput()
@@ -82,8 +84,12 @@ void TextInput::draw(sf::RenderWindow &win)
     sf::Text inputComponent;
     inputComponent.setPosition(topLeftCorner.x + 20, topLeftCorner.y + (height - fontSize) * 0.35);
     inputComponent.setCharacterSize(fontSize);
+    inputComponent.setFillColor(sf::Color::Black);
     if (strcmp(input, "") == 0 && isSelected == false)
+    {
         inputComponent.setString(placeholder);
+        inputComponent.setFillColor(sf::Color::Blue);
+    }
     else if (isSecuredTextEntry)
     {
         char securedStr[100];
@@ -98,7 +104,6 @@ void TextInput::draw(sf::RenderWindow &win)
     }
     else
         inputComponent.setString(input);
-    inputComponent.setFillColor(sf::Color::Black);
     inputComponent.setFont(font);
     win.draw(inputComponent);
 
@@ -137,3 +142,5 @@ void TextInput::changeError(std::string err)
 {
     errorMessage = err;
 }
+
+#endif
