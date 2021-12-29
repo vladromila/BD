@@ -4,12 +4,11 @@ class Word
 {
     char btnText[25];
     bool isHovered = false;
-    sf::Font font;
     int fontSize;
 
 public:
     Point topLeftCorner;
     Word();
-    Word(Point topLeftCorner,  int fontSize, const char btnText[]);
-    void draw(sf::RenderWindow &win);
+    Word(Point topLeftCorner, int fontSize, const char btnText[]);
+    void draw(sf::RenderWindow &win, sf::Font font);
 };

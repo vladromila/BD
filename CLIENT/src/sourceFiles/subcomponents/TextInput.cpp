@@ -17,7 +17,6 @@ TextInput::TextInput(Point topLeftCorner, int w, int h, int fontSize, const char
     container.isTextInputContainer = true;
     strcpy(this->placeholder, placeholder);
     strcpy(input, "");
-    font.loadFromFile("font.ttf");
     this->fontSize = fontSize;
 }
 
@@ -75,7 +74,7 @@ void TextInput::onTextEntered(sf::Event e)
     }
 }
 
-void TextInput::draw(sf::RenderWindow &win)
+void TextInput::draw(sf::RenderWindow &win, sf::Font font)
 {
     if (isSelected)
         container.drawAsSelected(topLeftCorner, 0, 1, win);

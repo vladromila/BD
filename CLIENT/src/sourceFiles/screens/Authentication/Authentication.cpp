@@ -16,12 +16,26 @@ void Authentication::onMouseMove(sf::Vector2f mousePos)
         registerScreen.onMouseMove(mousePos);
 }
 
-void Authentication::onMousePress(sf::Vector2f mousePos)
+std::string Authentication::onMousePress(sf::Vector2f mousePos)
 {
     if (selectedScreen == 1)
-        loginScreen.onMousePress(mousePos);
+    {
+        std::string loginPressStatus = loginScreen.onMousePress(mousePos);
+        printf("%s\n",loginPressStatus.c_str());
+        json loginPressStatusJson = json::parse(loginPressStatus);
+        if (loginPressStatusJson["switchToRegister"] == true)
+            selectedScreen = 0;
+        return loginPressStatus;
+    }
     else
-        registerScreen.onMousePress(mousePos);
+    {
+        std::string registerPressStatus = registerScreen.onMousePress(mousePos);
+        printf("%s\n",registerPressStatus.c_str());
+        json registerPressStatusJson = json::parse(registerPressStatus);
+        if (registerPressStatusJson["switchToLogin"] == true)
+            selectedScreen = 1;
+        return registerPressStatus;
+    }
 }
 
 void Authentication::onTextEntered(sf::Event e)
@@ -32,12 +46,12 @@ void Authentication::onTextEntered(sf::Event e)
         registerScreen.onTextEntered(e);
 }
 
-void Authentication::draw(sf::RenderWindow &win)
+void Authentication::draw(sf::RenderWindow &win, sf::Font font)
 {
     if (selectedScreen == 1)
     {
-        loginScreen.draw(win);
+        loginScreen.draw(win, font);
     }
     else
-        registerScreen.draw(win);
+        registerScreen.draw(win, font);
 }

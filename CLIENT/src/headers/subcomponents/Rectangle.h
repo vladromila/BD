@@ -11,5 +11,5 @@ public:
     bool isMouseOn(sf::Vector2f mousePos, Point parentOrigin);
     void draw(Point parentOrigin, int rotationAngle, float scale, sf::RenderWindow &win);
     void drawAsSelected(Point parentOrigin, int rotationAngle, float scale, sf::RenderWindow &win);
+    void drawCustom(Point parentOrigin, int rotationAngle, float scale, sf::RenderWindow &win,sf::Color fill,sf::Color border);
 };
-

@@ -100,7 +100,7 @@ int main()
 			while (1)
 			{
 				recv(newSocket, buffer, 1024, 0);
-				if (strcmp(buffer, ":exit") == 0)
+				if (strncmp(buffer, "exit",4) == 0)
 				{
 					printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 					break;
@@ -109,6 +109,7 @@ int main()
 				{
 					printf("Client: %s\n", buffer);
 					std::string res = requestHandler(buffer, con);
+					printf("%s\n",res.c_str());
 					send(newSocket, res.c_str(), res.size() + 1, 0);
 					bzero(buffer, sizeof(buffer));
 				}

@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <bits/stdc++.h>
 #include "../../../sourceFiles/subcomponents/TextInput.cpp"
 #include "../../../sourceFiles/subcomponents/Button.cpp"
 #include "../../../sourceFiles/subcomponents/Word.cpp"
@@ -13,7 +14,6 @@ class LoginScreen
     Button loginButton;
     Point registerButtonOrigin;
     Button registerButton;
-    sf::Texture bgImageTexture;
 
     Point titleOrigin;
     Word title;
@@ -24,8 +24,8 @@ class LoginScreen
 public:
     LoginScreen();
     LoginScreen(int clientSocket);
-    void draw(sf::RenderWindow &win);
+    void draw(sf::RenderWindow &win, sf::Font font);
     void onMouseMove(sf::Vector2f mousePos);
-    void onMousePress(sf::Vector2f mousePos);
+    std::string onMousePress(sf::Vector2f mousePos);
     void onTextEntered(sf::Event e);
 };

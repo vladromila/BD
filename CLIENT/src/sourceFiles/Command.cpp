@@ -1,16 +1,22 @@
 #include "../headers/Command.h"
 #include <bits/stdc++.h>
-Command::Command(const char *commandName, Point origin)
+
+Command::Command()
+{
+}
+Command::Command(std::string commandName, Point origin)
 {
     topLeftCorner.changeValues(origin.x, origin.y);
-    strcpy(this->commandName, commandName);
+    this->commandName = commandName;
 
-    Point containerOrigin(40-(strlen(this->commandName) * 20+80)/2, 5-INITIAL_COMMAND_HEIGHT/2);
-    container = Rectangle(containerOrigin, strlen(this->commandName) * 20, INITIAL_COMMAND_HEIGHT - 10);
+    Point containerOrigin(40 - ((commandName.size() + 2) * 20 + 80) / 2, 5 - INITIAL_COMMAND_HEIGHT / 2);
+    container = Rectangle(containerOrigin, (commandName.size() + 2) * 20, INITIAL_COMMAND_HEIGHT - 10);
 
-    connectionIn.changeValues(0-(container.w+80)/2, 0);
-    connectionOut.changeValues(container.w + 80-(container.w+80)/2, 0);
-    font.loadFromFile("./src/utils/fonts/OpenSans-Regular.ttf");
+container.topLeftCorner.scalePoint(scale);
+    connectionIn.changeValues(0 - (container.w + 80) / 2, 0);
+    connectionOut.changeValues(container.w + 80 - (container.w + 80) / 2, 0);
+    connectionIn.scalePoint(scale);
+    connectionOut.scalePoint(scale);
 }
 void Command::rotate(int rot)
 {
@@ -19,7 +25,7 @@ void Command::rotate(int rot)
     connectionOut.rotatePoint(rot);
     container.topLeftCorner.rotatePoint(rot);
 }
-void Command::draw(sf::RenderWindow &win)
+void Command::draw(sf::RenderWindow &win, sf::Font font)
 {
     connectionIn.draw(topLeftCorner, win);
     connectionOut.draw(topLeftCorner, win);
@@ -30,5 +36,6 @@ void Command::draw(sf::RenderWindow &win)
     letterComponent.setCharacterSize(30 * scale);
     letterComponent.setString(commandName);
     letterComponent.setFillColor(sf::Color::White);
-    letterComponent.setPosition(topLeftCorner.x + (container.w - letterComponent.getLocalBounds().width) / 2 + 40, topLeftCorner.y);
+    letterComponent.setPosition(topLeftCorner.x - (letterComponent.getGlobalBounds().width) / 2, topLeftCorner.y - letterComponent.getGlobalBounds().height / 2-10*scale);
+    win.draw(letterComponent);
 }

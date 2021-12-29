@@ -12,11 +12,10 @@ Word::Word(Point topLeftCorner, int fontSize, const char btnText[])
     strcpy(this->btnText, btnText);
     Point containerOrigin(0, 0);
     this->topLeftCorner = topLeftCorner;
-    font.loadFromFile("font.ttf");
     this->fontSize = fontSize;
 }
 
-void Word::draw(sf::RenderWindow &win)
+void Word::draw(sf::RenderWindow &win,sf::Font font)
 {
 
     sf::Text btnTextComponent;

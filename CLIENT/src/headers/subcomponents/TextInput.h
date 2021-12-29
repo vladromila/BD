@@ -12,7 +12,6 @@ class TextInput
     bool isSecuredTextEntry=false;
     bool hasAddedIndicator=false;
     bool hasRemovedIndicator=true;
-    sf::Font font;
     int width; 
     int height;
     int fontSize;
@@ -24,7 +23,7 @@ public:
     TextInput(Point topLeftCorner,int w,int h,int fontSize,const char placeholder[],bool securedTextEntry);
     void onTextEntered(sf::Event e);
     void onMousePress(sf::Vector2f mousePos);
-    void draw(sf::RenderWindow &win);
+    void draw(sf::RenderWindow &win,sf::Font font);
     void updateText(char t[]);
     char * getInputValue();
     void resetError();

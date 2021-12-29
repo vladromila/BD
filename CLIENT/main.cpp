@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "./src/sourceFiles/screens/Authentication/Authentication.cpp"
+#include "./src/sourceFiles/screens/MainApp/MainApp.cpp"
 #include <bits/stdc++.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +18,6 @@ int main()
     struct sockaddr_in serverAddr;
     char buffer[1024];
 
-
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket < 0)
     {
@@ -31,8 +30,7 @@ int main()
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(PORT);
     // serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
-        serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
+    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     ret = connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
     if (ret < 0)
@@ -47,11 +45,10 @@ int main()
     int W = sf::VideoMode::getDesktopMode().width;
     int H = sf::VideoMode::getDesktopMode().height;
     sf::RenderWindow window(sf::VideoMode(W, H), "DDP by Romila Vlad Alexandru", sf::Style::Fullscreen);
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-    Point commandOrigin(W * .125, 550);
-    int rot = 0;
-    Authentication loginScreen(clientSocket);
+
+    sf::Font font;
+    font.loadFromFile("font.ttf");
+    MainApp mainApp(clientSocket);
     while (window.isOpen())
     {
 
@@ -66,7 +63,6 @@ int main()
                 window.close();
             if (event.type == sf::Event::MouseButtonPressed)
             {
-                rot += 10;
             }
             if (event.type == sf::Event::Resized)
             {
@@ -75,18 +71,18 @@ int main()
             }
             if (event.type == sf::Event::TextEntered)
             {
-                loginScreen.onTextEntered(event);
+                mainApp.onTextEntered(event);
             }
             if (event.type == sf::Event::MouseMoved)
             {
-                loginScreen.onMouseMove(sf::Vector2f(mousePos));
+                mainApp.onMouseMove(sf::Vector2f(mousePos));
             }
             if (event.type == sf::Event::MouseButtonPressed)
             {
-                loginScreen.onMousePress(sf::Vector2f(mousePos));
+                mainApp.onMousePress(sf::Vector2f(mousePos),window);
             }
         }
-        loginScreen.draw(window);
+        mainApp.draw(window, font);
         window.display();
     }
 

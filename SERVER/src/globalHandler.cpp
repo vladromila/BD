@@ -3,6 +3,7 @@
 #include <string>
 #include <openssl/sha.h>
 #include "/usr/include/mysql/mysql.h"
+#include <time.h>
 using json = nlohmann::json;
 
 bool isChar(char c)
@@ -85,26 +86,90 @@ void sha256_string(const char *string, char outputBuffer[65])
 
 std::string login(std::string email, std::string password, MYSQL *con)
 {
-    char hashedPassword[65];
-    sha256_string(password.c_str(), hashedPassword);
+
+    json res = {
+        {"success", false},
+        {"emailError", ""},
+        {"passwordError", ""},
+        {"session_token", ""},
+        {"lastName", ""}};
+    bool isAnyError = false;
+    if (!isEmailValid(email))
+    {
+        res["emailError"] = "Invalid email address format.";
+        isAnyError = true;
+    }
+    else
+    {
+        MYSQL_RES *dbRes;
+        char initial_query[1024];
+        int initial_query_stat;
+        sprintf(initial_query, "SELECT email,password,firstName,lastName FROM users WHERE email='%s'", email.c_str());
+
+        mysql_query(con, initial_query);
+        dbRes = mysql_store_result(con);
+
+        if (!mysql_num_rows(dbRes))
+        {
+            res["emailError"] = "A user with this email does not exist.";
+            return res.dump();
+        }
+
+        char hashedPassword[65];
+        sha256_string(password.c_str(), hashedPassword);
+
+        MYSQL_ROW row = mysql_fetch_row(dbRes);
+
+        if (strcmp(row[1], hashedPassword) != 0)
+        {
+            res["passwordError"] = "Wrong password. Please try again";
+            mysql_free_result(dbRes);
+            return res.dump();
+        }
+        res["data"]["firstName"] = std::string(row[2]);
+        res["data"]["lastName"] = std::string(row[3]);
+        mysql_free_result(dbRes);
+    }
+
+    if (password.size() < 4)
+    {
+        res["passwordError"] = "The entered password is too short.";
+        isAnyError = true;
+    }
+
+    if (isAnyError == true)
+    {
+        return res.dump();
+    }
+
+    time_t _tm = time(NULL);
+
+    struct tm *curtime = localtime(&_tm);
+    char sessionTokenFrom[100];
+    strcpy(sessionTokenFrom, email.c_str());
+    strcat(sessionTokenFrom, asctime(curtime));
+
+    char sessionToken[65];
+    sha256_string(sessionTokenFrom, sessionToken);
+
     char query[1024];
     int query_stat;
-    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", email.c_str(), password.c_str(), hashedPassword);
+
+    sprintf(query, "UPDATE users SET session_token='%s', expiry_date=DATE_ADD(CURDATE(),INTERVAL 1 MONTH) where email='%s'", sessionToken, email.c_str());
 
     query_stat = mysql_query(con, query);
 
     if (query_stat != 0)
     {
-        json res = {
-            {"success", false},
-            {"generalError", "Error creating a new user. Try again later."}};
+        res["data"] = "";
+        res["password"] = "Error updating the user session. Try again later.";
         return res.dump();
     }
     else
     {
-        json res = {
-            {"success", true},
-        };
+        res["data"]["email"] = email;
+        res["data"]["sessionToken"] = std::string(sessionToken);
+        res["success"] = true;
         return res.dump();
     }
 }
@@ -130,7 +195,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
         MYSQL_RES *dbRes;
         char initial_query[1024];
         int initial_query_stat;
-        sprintf(initial_query, "SELECT firstName FROM users WHERE firstName='%s'", email.c_str());
+        sprintf(initial_query, "SELECT email FROM users WHERE email='%s'", email.c_str());
 
         mysql_query(con, initial_query);
         dbRes = mysql_store_result(con);
@@ -170,11 +235,22 @@ std::string registerUser(std::string email, std::string password, std::string pa
         return res.dump();
     }
 
+    time_t _tm = time(NULL);
+
+    struct tm *curtime = localtime(&_tm);
+    char *sessionTokenFrom;
+    strcpy(sessionTokenFrom, email.c_str());
+    strcat(sessionTokenFrom, asctime(curtime));
+
+    char sessionToken[65];
+    sha256_string(sessionTokenFrom, sessionToken);
+
     char hashedPassword[65];
     sha256_string(password.c_str(), hashedPassword);
     char query[1024];
     int query_stat;
-    sprintf(query, "insert into users(firstName,lastName, password) values('%s','%s','%s')", firstName.c_str(), lastName.c_str(), hashedPassword);
+    sprintf(query, "insert into users(email,firstName,lastName, password, session_token,expiry_date) values('%s','%s','%s','%s','%s',DATE_ADD(CURDATE(),INTERVAL 1 MONTH))", email.c_str(), firstName.c_str(), lastName.c_str(), hashedPassword, sessionToken);
+
     query_stat = mysql_query(con, query);
     if (query_stat != 0)
     {
@@ -183,6 +259,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
     }
     else
     {
+        res["session_token"]=std::string(sessionToken);
         res["success"] = true;
         return res.dump();
     }

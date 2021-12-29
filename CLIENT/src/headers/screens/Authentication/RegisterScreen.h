@@ -12,18 +12,16 @@ class RegisterScreen
     TextInput passwordConfirm;
     Button loginButton;
     Button registerButton;
-    sf::Texture bgImageTexture;
 
     Word title;
 
-    sf::Sprite bgImage;
     int clientSocket;
 
 public:
-RegisterScreen();
+    RegisterScreen();
     RegisterScreen(int clientSocket);
-    void draw(sf::RenderWindow &win);
+    void draw(sf::RenderWindow &win,sf::Font font);
     void onMouseMove(sf::Vector2f mousePos);
-    void onMousePress(sf::Vector2f mousePos);
+    std::string onMousePress(sf::Vector2f mousePos);
     void onTextEntered(sf::Event e);
 };

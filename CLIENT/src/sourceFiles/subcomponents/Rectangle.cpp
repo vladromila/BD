@@ -51,4 +51,16 @@ void Rectangle::drawAsSelected(Point parentOrigin, int rotationAngle, float scal
     rectangle.rotate(rotationAngle);
     win.draw(rectangle);
 }
+
+void Rectangle::drawCustom(Point parentOrigin, int rotationAngle, float scale, sf::RenderWindow &win, sf::Color fill, sf::Color outline)
+{
+    sf::RectangleShape rectangle(sf::Vector2f(w, h));
+    rectangle.setPosition(parentOrigin.x + topLeftCorner.x, parentOrigin.y + topLeftCorner.y);
+    rectangle.setFillColor(fill);
+    rectangle.setOutlineColor(outline);
+    rectangle.setOutlineThickness(3);
+    rectangle.setScale(sf::Vector2f(scale, scale));
+    rectangle.rotate(rotationAngle);
+    win.draw(rectangle);
+}
 #endif
