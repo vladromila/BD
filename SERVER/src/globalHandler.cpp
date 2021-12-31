@@ -168,7 +168,7 @@ std::string login(std::string email, std::string password, MYSQL *con)
     else
     {
         res["data"]["email"] = email;
-        res["data"]["sessionToken"] = std::string(sessionToken);
+        res["data"]["session_token"] = std::string(sessionToken);
         res["success"] = true;
         return res.dump();
     }
@@ -176,7 +176,7 @@ std::string login(std::string email, std::string password, MYSQL *con)
 
 std::string registerUser(std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
 {
-
+    printf("am intrat \n");
     json res = {
         {"success", false},
         {"emailError", ""},
@@ -206,7 +206,7 @@ std::string registerUser(std::string email, std::string password, std::string pa
             return res.dump();
         }
     }
-
+    printf("am trecut de verificarea existentei adresei\n");
     if (firstName.size() < 4)
     {
         res["firstNameError"] = "The first name is too short.";
@@ -259,10 +259,37 @@ std::string registerUser(std::string email, std::string password, std::string pa
     }
     else
     {
-        res["session_token"]=std::string(sessionToken);
+        res["session_token"] = std::string(sessionToken);
         res["success"] = true;
         return res.dump();
     }
+}
+
+std::string loginWithToken(std::string email, std::string session_token, MYSQL *con)
+{
+    json res = {
+        {"isLoggedIn", false}};
+    char query[1024];
+    int query_stat;
+
+    MYSQL_RES *dbRes;
+
+    sprintf(query, "SELECT email FROM users WHERE email='%s' AND session_token='%s' AND CURDATE()<=expiry_date", email.c_str(), session_token.c_str());
+    printf("%s\n", query);
+    query_stat = mysql_query(con, query);
+
+    dbRes = mysql_store_result(con);
+    if (query_stat != 0)
+    {
+        return res.dump();
+    }
+    else if (mysql_num_rows(dbRes) == 1)
+    {
+        res["isLoggedIn"] = true;
+        return res.dump();
+    }
+    else
+        return res.dump();
 }
 
 std::string requestHandler(char *r, MYSQL *con)
@@ -279,10 +306,12 @@ std::string requestHandler(char *r, MYSQL *con)
     }
     else
     {
-        if (req["reqType"] == "login")
-            return login(req["email"], req["password"], con);
-        else if (req["reqType"] == "register")
+        if (req["reqType"] == "register")
             return registerUser(req["email"], req["password"], req["passwordConfirm"], req["firstName"], req["lastName"], con);
+        else if (req["reqType"] == "loginWithToken")
+            return loginWithToken(req["email"], req["session_token"], con);
+        else if (req["reqType"] == "login")
+            return login(req["email"], req["password"], con);
         else
         {
             return failedRequest.dump();

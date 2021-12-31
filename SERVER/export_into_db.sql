@@ -1,0 +1,64 @@
+-- MySQL dump 10.13  Distrib 8.0.27, for Linux (x86_64)
+--
+-- Host: localhost    Database: DDP
+-- ------------------------------------------------------
+-- Server version	8.0.27-0ubuntu0.20.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `DDP`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `DDP` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `DDP`;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `lastName` varchar(255) DEFAULT NULL,
+  `firstName` varchar(255) DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `session_token` varchar(100) DEFAULT NULL,
+  `expiry_date` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (6,'Vlad-Alexandru','Romila','test@test.com','8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92','72546cf9e2a3ab0a4682542240cd0076d81f308f7a193e6951ee38e1f4a0a03c','2022-01-31'),(7,'test','test','t@t.com','96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e','f793e8fde7ae632a8c2eaa81bdde5c295ec5f225c243a1f6346fb9b5b8c6147b','2022-01-28'),(8,'testtest','testtest','tt@t.com','37268335dd6931045bdcdf92623ff819a64244b53d0e746d438797349d4da578','c66e26120d24fba6a408673f8d71177728edf98b81f43ab95864521f97fcecfa','2022-01-28'),(9,'asdasd','asdasd','ttt@test.com','5fd924625f6ab16a19cc9807c7c506ae1813490e4ba675f843d5a10e0baacdb8','88b9ec7f743acf7044ba73f9eff1bc6c4e32afca417334d93871a8570ee57f4b','2022-01-28'),(10,'123123','test@test.com','ttt@ttt.com','96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e','53c06ccf76d5f65a0ceb8e994f42e50ad2ee23cd56381344aacf787bed026111','2022-01-31'),(11,'asdasd','asdasd','sss@sss.com','96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e','051b05b384e161868e04020bcc4cbf8cf6f1e424dc7441b6e5e7c260e5f00644','2022-01-31'),(12,'123123','123123','serban@test.com','96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e','c3e4e2e0e8a4875851da7014ff261c986875a6f29a54847b82c2c1887adc2a4d','2022-01-31'),(13,'123123','123123','finaltest@gmail.com','96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e','389afa04ce89f43258f3fbd409220f3c3e1bd9a48527225e9feeeb2a00126373','2022-01-31'),(14,'tttttt','tttttt','ftest@t.f','c7854c301113d781c6f3cc763390da65f6459ee30cc52359842f5901649abbee','73fa0d397288c3f584666bca0a855d2ca4cd5d0ba60439ff14612795cee7ce6d','2022-01-31');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2021-12-31  4:27:32
