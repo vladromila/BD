@@ -14,6 +14,38 @@ MainApp::MainApp(int clientSocket) : auth(clientSocket)
     bgClearImageTexture.loadFromFile("bgClear.jpg");
     bgClearImage = sf::Sprite(bgClearImageTexture);
     bgClearImage.setScale(1, 1);
+
+    std::fstream configFile;
+    char homeDir[256];
+    strcpy(homeDir, getenv("HOME"));
+    strcat(homeDir, "/.config/DDP.json");
+
+    configFile.open(homeDir, std::ios::in);
+    if (!configFile)
+    {
+        printf("Config file could not be opened.");
+        screen = 0;
+    }
+    else
+    {
+        std::string savedUserData;
+        getline(configFile, savedUserData);
+        json toSendBody = json::parse(savedUserData);
+        toSendBody["reqType"] = "loginWithToken";
+        write(clientSocket, toSendBody.dump().c_str(), toSendBody.dump().size() + 1);
+        
+        char res[1024];
+        read(clientSocket, res, 1024);
+        std::string resString;
+        resString.append(res);
+        json resJson = json::parse(resString);
+        if (resJson["isLoggedIn"] == true)
+            userData = json::parse(savedUserData), screen = 1;
+        else
+            screen = 0;
+        configFile.close();
+    }
+    configFile.close();
 }
 
 void MainApp::onMouseMove(sf::Vector2f mousePos)
@@ -22,6 +54,8 @@ void MainApp::onMouseMove(sf::Vector2f mousePos)
         auth.onMouseMove(mousePos);
     else if (screen == 1)
         menu.onMouseMove(mousePos);
+    else if (screen == 2)
+        commandMaker.onMouseMove(mousePos);
 }
 
 void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
@@ -42,7 +76,7 @@ void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
         if (menuRes == 0)
         {
             commandMaker = CommandMaker(clientSocket, userData);
-            screen=2;
+            screen = 2;
         }
         else if (menuRes == 2)
         {
@@ -51,7 +85,17 @@ void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
             win.close();
         }
     }
+    else if (screen == 2)
+    {
+        commandMaker.onMousePress(mousePos);
+    }
 }
+
+void MainApp::onMouseRelease(sf::Vector2f mousePos)
+{
+    commandMaker.onMouseRelease(mousePos);
+}
+
 void MainApp::onTextEntered(sf::Event e)
 {
     if (screen == 0)

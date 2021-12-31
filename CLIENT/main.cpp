@@ -29,8 +29,8 @@ int main()
     memset(&serverAddr, '\0', sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(PORT);
-    // serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
-    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
+    // serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     ret = connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
     if (ret < 0)
@@ -77,9 +77,13 @@ int main()
             {
                 mainApp.onMouseMove(sf::Vector2f(mousePos));
             }
-            if (event.type == sf::Event::MouseButtonPressed)
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
-                mainApp.onMousePress(sf::Vector2f(mousePos),window);
+                mainApp.onMousePress(sf::Vector2f(mousePos), window);
+            }
+            if (event.type == sf::Event::MouseButtonReleased)
+            {
+                mainApp.onMouseRelease(sf::Vector2f(mousePos));
             }
         }
         mainApp.draw(window, font);

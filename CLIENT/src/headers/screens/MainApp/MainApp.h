@@ -9,10 +9,9 @@ class MainApp
     CommandMaker commandMaker;
 
     int clientSocket;
-    int screen=0;
+    int screen = -1;
 
     json userData;
-
 
     sf::Texture bgImageTexture;
 
@@ -26,7 +25,8 @@ public:
     MainApp();
     MainApp(int clientSocket);
     void onMouseMove(sf::Vector2f mousePos);
-    void onMousePress(sf::Vector2f mousePos,sf::RenderWindow &win);
+    void onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win);
+    void onMouseRelease(sf::Vector2f mousePos);
     void onTextEntered(sf::Event e);
     void draw(sf::RenderWindow &win, sf::Font font);
 };

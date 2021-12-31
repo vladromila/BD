@@ -19,10 +19,30 @@ Button::Button(Point topLeftCorner, int w, int h, int fontSize, const char btnTe
     this->fontSize = fontSize;
 }
 
-Button::Button(Point topLeftCorner, int w, int h, int fontSize, const char btnText[], sf::Color f, sf::Color o, sf::Color fh, sf::Color oh,sf::Color fontc,sf::Color fontch)
+Button::Button(Point topLeftCorner, int w, int h, int fontSize, const char btnText[], sf::Color f, sf::Color o, sf::Color fh, sf::Color oh, sf::Color fontc, sf::Color fontch)
 {
-    fontColor=fontc;
-    fontColorHover=fontch;
+    fontColor = fontc;
+    fontColorHover = fontch;
+    fill = f;
+    outline = o;
+    fillHover = fh;
+    outlineHover = oh;
+    width = w;
+    height = h;
+    strcpy(this->btnText, btnText);
+    Point containerOrigin(0, 0);
+    container = Rectangle(containerOrigin, width, height);
+    this->topLeftCorner = topLeftCorner;
+    this->fontSize = fontSize;
+}
+
+Button::Button(Point topLeftCorner, int w, int h, int fontSize, const char btnText[], sf::Color f, sf::Color o, sf::Color fh, sf::Color oh, sf::Color fontc, sf::Color fontch, sf::Color sf, sf::Color sff, bool selectable)
+{
+    isSelectable = selectable;
+    selectedColor = sf;
+    fontSelectedColo = sff;
+    fontColor = fontc;
+    fontColorHover = fontch;
     fill = f;
     outline = o;
     fillHover = fh;
@@ -75,14 +95,18 @@ void Button::draw(sf::RenderWindow &win, sf::Font font)
 
 void Button::drawCustom(sf::RenderWindow &win, sf::Font font)
 {
-    if (isHovered)
+    if (isSelected)
+        container.drawCustom(topLeftCorner, 0, 1, win, selectedColor, selectedColor);
+    else if (isHovered)
         container.drawCustom(topLeftCorner, 0, 1, win, fillHover, outlineHover);
     else
         container.drawCustom(topLeftCorner, 0, 1, win, fill, outline);
 
     sf::Text btnTextComponent;
     btnTextComponent.setString(btnText);
-    if (isHovered)
+    if (isSelected)
+        btnTextComponent.setFillColor(fontSelectedColo);
+    else if (isHovered)
         btnTextComponent.setFillColor(fontColorHover);
     else
         btnTextComponent.setFillColor(fontColor);

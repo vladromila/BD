@@ -98,6 +98,18 @@ std::string RegisterScreen::onMousePress(sf::Vector2f mousePos)
             fRes["data"]["firstName"]=fn;
             fRes["data"]["lastName"]=ln;
             fRes["data"]["session_token"]=resJson["session_token"];
+            std::fstream configFile;
+            char homeDir[256];
+            strcpy(homeDir, getenv("HOME"));
+            strcat(homeDir, "/.config/DDP.json");
+
+            configFile.open(homeDir, std::ios::out);
+            if (!configFile)
+            {
+                printf("Config file could not be opened.");
+            }
+            configFile << fRes["data"].dump().c_str();
+            configFile.close();
             return fRes.dump();
         }
         else

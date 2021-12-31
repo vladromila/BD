@@ -3,17 +3,24 @@
 
 class Command
 {
-    Point topLeftCorner;
     Point connectionIn;
     Point connectionOut;
     std::string commandName;
-    float scale = 1;
-    int rotationAngle = 0;
+    bool hasSetOrigin=false;
     Rectangle container;
+    Rectangle selectedContainer;
+    sf::Text letterComponent;
 
 public:
+    Point topLeftCorner;
+    bool isSelected = false;
+    float scale = 1;
+    int rotationAngle = 0;
+int initialLetterX;
     Command();
     Command(std::string commandName, Point origin);
-    void rotate(int rot);
+    void rotateAt(int rot);
+    void scaleAt(float scale);
+    bool onMousePress(sf::Vector2f mousePos);
     void draw(sf::RenderWindow &win, sf::Font font);
 };
