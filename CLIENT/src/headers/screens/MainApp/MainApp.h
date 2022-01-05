@@ -21,6 +21,9 @@ class MainApp
 
     sf::Sprite bgClearImage;
 
+    sf::Sprite logo;
+    sf::Texture logoTexture;
+
 public:
     MainApp();
     MainApp(int clientSocket);

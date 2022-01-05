@@ -13,9 +13,11 @@ Rectangle::Rectangle(Point origin, int width, int height)
     topLeftCorner.changeValues(origin.x, origin.y);
 }
 
-bool Rectangle::isMouseOn(sf::Vector2f mousePos, Point parentOrigin)
+bool Rectangle::isMouseOn(sf::Vector2f mousePos, Point parentOrigin, float scale, int rotationAngle)
 {
     sf::RectangleShape rectangle(sf::Vector2f(w, h));
+    rectangle.setScale(sf::Vector2f(scale, scale));
+    rectangle.rotate(rotationAngle);
     rectangle.setPosition(parentOrigin.x + topLeftCorner.x, parentOrigin.y + topLeftCorner.y);
     if (rectangle.getGlobalBounds().contains(sf::Vector2f(mousePos)))
         return true;

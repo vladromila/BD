@@ -1,3 +1,5 @@
+
+#pragma once
 #include "../../headers/subcomponents/Point.h"
 #include "../../utils/GlobalVariables.h"
 #include <bits/stdc++.h>
@@ -31,7 +33,7 @@ void Point::draw(Point origin, sf::RenderWindow &win)
 bool Point::isMouseOn(Point origin, Point mousePosition)
 {
     sf::CircleShape circle(POINT_CIRCLE_RADIUS);
-    circle.setPosition(sf::Vector2f(x - POINT_CIRCLE_RADIUS, y - POINT_CIRCLE_RADIUS));
+    circle.setPosition(sf::Vector2f(origin.x + x - POINT_CIRCLE_RADIUS, origin.y + y - POINT_CIRCLE_RADIUS));
     circle.setFillColor(sf::Color(0, 0, 0));
     circle.setOutlineColor(sf::Color(0, 0, 0));
     circle.setOutlineThickness(1);

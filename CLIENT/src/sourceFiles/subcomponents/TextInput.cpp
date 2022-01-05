@@ -22,7 +22,7 @@ TextInput::TextInput(Point topLeftCorner, int w, int h, int fontSize, const char
 
 void TextInput::onMousePress(sf::Vector2f mousePos)
 {
-    if (container.isMouseOn(mousePos, topLeftCorner) == true)
+    if (container.isMouseOn(mousePos, topLeftCorner,1,0) == true)
     {
         isSelected = true;
         if (hasAddedIndicator == false)

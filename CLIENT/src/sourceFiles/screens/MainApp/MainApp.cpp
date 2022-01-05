@@ -6,6 +6,12 @@ MainApp::MainApp()
 
 MainApp::MainApp(int clientSocket) : auth(clientSocket)
 {
+    logoTexture.loadFromFile("ddp.png");
+    logo = sf::Sprite(logoTexture);
+    logo.setPosition(9, 9);
+    // logo.setScale(1,1);
+    logo.setScale((sf::VideoMode::getDesktopMode().height * 0.07 - 9) / 100-0.2, sf::VideoMode::getDesktopMode().height * 0.07 / 100-0.2);
+
     this->clientSocket = clientSocket;
     bgImageTexture.loadFromFile("bg.png");
     bgImage = sf::Sprite(bgImageTexture);
@@ -33,7 +39,7 @@ MainApp::MainApp(int clientSocket) : auth(clientSocket)
         json toSendBody = json::parse(savedUserData);
         toSendBody["reqType"] = "loginWithToken";
         write(clientSocket, toSendBody.dump().c_str(), toSendBody.dump().size() + 1);
-        
+
         char res[1024];
         read(clientSocket, res, 1024);
         std::string resString;
@@ -87,7 +93,7 @@ void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
     }
     else if (screen == 2)
     {
-        commandMaker.onMousePress(mousePos);
+        commandMaker.onMousePress(mousePos, win);
     }
 }
 
@@ -112,5 +118,8 @@ void MainApp::draw(sf::RenderWindow &win, sf::Font font)
     else if (screen == 1)
         menu.draw(win, font);
     else if (screen == 2)
+    {
         commandMaker.draw(win, font);
+        win.draw(logo);
+    }
 }

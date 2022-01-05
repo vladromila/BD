@@ -58,7 +58,7 @@ Button::Button(Point topLeftCorner, int w, int h, int fontSize, const char btnTe
 
 void Button::onMouseMove(sf::Vector2f mousePos)
 {
-    if (container.isMouseOn(mousePos, topLeftCorner) == true)
+    if (container.isMouseOn(mousePos, topLeftCorner,1,0) == true)
         isHovered = true;
     else
         isHovered = false;
@@ -66,7 +66,7 @@ void Button::onMouseMove(sf::Vector2f mousePos)
 
 bool Button::onMousePress(sf::Vector2f mousePos)
 {
-    if (container.isMouseOn(mousePos, topLeftCorner) == true)
+    if (container.isMouseOn(mousePos, topLeftCorner,1,0) == true)
         return true;
     else
         return false;
