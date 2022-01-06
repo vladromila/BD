@@ -10,7 +10,7 @@ MainApp::MainApp(int clientSocket) : auth(clientSocket)
     logo = sf::Sprite(logoTexture);
     logo.setPosition(9, 9);
     // logo.setScale(1,1);
-    logo.setScale((sf::VideoMode::getDesktopMode().height * 0.07 - 9) / 100-0.2, sf::VideoMode::getDesktopMode().height * 0.07 / 100-0.2);
+    logo.setScale((sf::VideoMode::getDesktopMode().height * 0.07 - 9) / 100 - 0.2, sf::VideoMode::getDesktopMode().height * 0.07 / 100 - 0.2);
 
     this->clientSocket = clientSocket;
     bgImageTexture.loadFromFile("bg.png");
@@ -64,6 +64,14 @@ void MainApp::onMouseMove(sf::Vector2f mousePos)
         commandMaker.onMouseMove(mousePos);
 }
 
+void MainApp::onMouseRightPress(sf::Vector2f mousePos, sf::RenderWindow &win)
+{
+    if (screen == 2)
+    {
+        commandMaker.onMouseRightPress(mousePos, win);
+    }
+}
+
 void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
 {
     if (screen == 0)
@@ -106,6 +114,8 @@ void MainApp::onTextEntered(sf::Event e)
 {
     if (screen == 0)
         auth.onTextEntered(e);
+    else if (screen == 2)
+        commandMaker.onTextEntered(e);
 }
 void MainApp::draw(sf::RenderWindow &win, sf::Font font)
 {

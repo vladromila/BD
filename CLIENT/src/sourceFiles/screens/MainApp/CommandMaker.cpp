@@ -8,15 +8,20 @@ CommandMaker::CommandMaker(int clientSocket, json userData) : container(Point(sf
                                                               rotationSlider(sf::VideoMode::getDesktopMode().width - sf::VideoMode::getDesktopMode().width * 0.05 - 250, sf::VideoMode::getDesktopMode().height - 30, 0),
                                                               scaleSlider(sf::VideoMode::getDesktopMode().width - 50, sf::VideoMode::getDesktopMode().height - sf::VideoMode::getDesktopMode().height * 0.05 - 160, 1)
 {
-      rotationSlider.create(0, 360);
+    rotationSlider.create(0, 360);
     scaleSlider.create(3, 8);
 
-    saveButton= Button(Point(sf::VideoMode::getDesktopMode().width * 0.1+9, 3), sf::VideoMode::getDesktopMode().width * 0.1, sf::VideoMode::getDesktopMode().height * 0.07-9, sf::VideoMode::getDesktopMode().height * 0.045, "Save", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
-        saveAsButton= Button(Point(sf::VideoMode::getDesktopMode().width * 0.20+18, 3), sf::VideoMode::getDesktopMode().width * 0.14, sf::VideoMode::getDesktopMode().height * 0.07-9, sf::VideoMode::getDesktopMode().height * 0.045, "Save As", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
-
+    saveButton = Button(Point(sf::VideoMode::getDesktopMode().width * 0.1 + 9, 3), sf::VideoMode::getDesktopMode().width * 0.1, sf::VideoMode::getDesktopMode().height * 0.07 - 9, sf::VideoMode::getDesktopMode().height * 0.045, "Save", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
+    saveAsButton = Button(Point(sf::VideoMode::getDesktopMode().width * 0.20 + 18, 3), sf::VideoMode::getDesktopMode().width * 0.14, sf::VideoMode::getDesktopMode().height * 0.07 - 9, sf::VideoMode::getDesktopMode().height * 0.045, "Save As", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
 
     quitButton = Button(Point(sf::VideoMode::getDesktopMode().width * 0.975 - 9, sf::VideoMode::getDesktopMode().height * 0.95 - 6), sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.031, "X");
 
+    endPoint = Point(sf::VideoMode().getDesktopMode().width - 41, sf::VideoMode().getDesktopMode().height * 0.55);
+
+    commands[++commandsLength] = Command("", Point(sf::VideoMode().getDesktopMode().width * 0.1, sf::VideoMode().getDesktopMode().height * 0.45), ++commandId);
+    commands[++commandsLength] = Command("", Point(sf::VideoMode().getDesktopMode().width, sf::VideoMode().getDesktopMode().height * 0.45), ++commandId);
+    commands[0].isStartCommand = true;
+    commands[1].isEndCommand=true;
     defaultButtons[0] = Button(Point(3, sf::VideoMode::getDesktopMode().height * 0.07), sf::VideoMode::getDesktopMode().width * 0.1, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "cat", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
     defaultButtons[1] = Button(Point(3, sf::VideoMode::getDesktopMode().height * 0.12 + 9), sf::VideoMode::getDesktopMode().width * 0.1, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "grep", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
     defaultButtons[2] = Button(Point(3, sf::VideoMode::getDesktopMode().height * 0.17 + 18), sf::VideoMode::getDesktopMode().width * 0.1, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "filter", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
@@ -33,171 +38,234 @@ CommandMaker::CommandMaker(int clientSocket, json userData) : container(Point(sf
 
 void CommandMaker::onMouseMove(sf::Vector2f mousePos)
 {
+    if (isCommandModalOpened)
+    {
 
-    if (rotationSlider.isActivated == true)
-        if (currentSelectedCommandIndex != -1)
-            commands[currentSelectedCommandIndex].rotateAt(rotationSlider.getSliderValue());
-    if (scaleSlider.isActivated == true)
-        if (currentSelectedCommandIndex != -1)
-            commands[currentSelectedCommandIndex].scaleAt(scaleSlider.getSliderValue() / 4.0f);
-    if (isMouseLongPressed == true && currentSelectedCommandIndex != -1 && rotationSlider.isActivated == false && scaleSlider.isActivated == false)
-    {
-        commands[currentSelectedCommandIndex].topLeftCorner.x = mousePos.x - xDiffOnLongPress;
-        commands[currentSelectedCommandIndex].topLeftCorner.y = mousePos.y - yDiffOnLongPress;
+        commandModal.onMouseMove(mousePos);
     }
-    for (int i = 0; i < defaultButtonsLength; i++)
-        defaultButtons[i].onMouseMove(mousePos);
-    quitButton.onMouseMove(mousePos);
-    if (isFromInConnectionSelected || isFromOutConnectionSelected)
+    else
     {
-        otherEnd.x = mousePos.x;
-        otherEnd.y = mousePos.y;
+
+        if (rotationSlider.isActivated == true)
+            if (currentSelectedCommandIndex != -1)
+                commands[currentSelectedCommandIndex].rotateAt(rotationSlider.getSliderValue());
+        if (scaleSlider.isActivated == true)
+            if (currentSelectedCommandIndex != -1)
+                commands[currentSelectedCommandIndex].scaleAt(scaleSlider.getSliderValue() / 4.0f);
+        if (isMouseLongPressed == true && currentSelectedCommandIndex != -1 && rotationSlider.isActivated == false && scaleSlider.isActivated == false)
+        {
+            commands[currentSelectedCommandIndex].topLeftCorner.x = mousePos.x - xDiffOnLongPress;
+            commands[currentSelectedCommandIndex].topLeftCorner.y = mousePos.y - yDiffOnLongPress;
+        }
+        for (int i = 0; i < defaultButtonsLength; i++)
+            defaultButtons[i].onMouseMove(mousePos);
+        quitButton.onMouseMove(mousePos);
+        if (isFromInConnectionSelected || isFromOutConnectionSelected)
+        {
+            otherEnd.x = mousePos.x;
+            otherEnd.y = mousePos.y;
+        }
+    }
+}
+
+void CommandMaker::onTextEntered(sf::Event e)
+{
+    if (isCommandModalOpened)
+        commandModal.onTextEntered(e);
+}
+
+void CommandMaker::onMouseRightPress(sf::Vector2f mousePos, sf::RenderWindow &win)
+{
+    if (isCommandModalOpened == false)
+    {
+        commandModal.onMouseMove(sf::Vector2f(0, 0));
+        bool isACommandSelected = false;
+        int commandSelectedIndex = -1;
+
+        for (int i = 0; i <= commandsLength; i++)
+            if (commands[i].onMousePress(mousePos))
+                isACommandSelected = true, commandSelectedIndex = i;
+        if (isACommandSelected == true)
+        {
+            if (commandSelectedIndex != currentSelectedCommandIndex)
+            {
+                for (int i = 0; i <= commandsLength; i++)
+                    commands[i].isSelected = false;
+            }
+            isCommandModalOpened = true;
+            currentSelectedCommandIndex = commandSelectedIndex;
+            commands[commandSelectedIndex].isSelected = true;
+            strcpy(commandModal.parameters.input, commands[currentSelectedCommandIndex].parameters.c_str());
+        }
     }
 }
 
 void CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
 {
-    printf("%d\n", connectionsLength);
-    isMouseLongPressed = true;
-
-    bool isACommandSelected = false;
-    int commandSelectedIndex = -1;
-    bool isOnRotationSlider = rotationSlider.isMouseOn(mousePos);
-    bool isOnScaleSlider = scaleSlider.isMouseOn(mousePos);
-
-    for (int i = 0; i <= commandsLength; i++)
-        if (commands[i].onMousePress(mousePos))
-            isACommandSelected = true, commandSelectedIndex = i;
-    for (int i = 0; i <= commandsLength; i++)
+    if (isCommandModalOpened)
     {
-        if (commands[i].connectionIn.isMouseOn(commands[i].topLeftCorner, Point(mousePos.x, mousePos.y)))
+        std::string res = commandModal.onMousePress(mousePos);
+        json resJson = json::parse(res);
+        if (resJson["close"] == true)
+            isCommandModalOpened = false;
+        else if (resJson["delete"] == true)
         {
-            bool isAlreadyConnected = false;
-            for (int j = 0; j <= connectionsLength; j++)
-                if (connections[j].isDeleted == false && connections[j].connectionInID == commands[i].id)
-                {
-                    isFromOutConnectionSelected = true;
-                    selectedOutConnectionID = connections[j].connectionOutID;
-                    connections[j].isDeleted = true;
-                    isAlreadyConnected = true;
-                }
-            if (isAlreadyConnected == false)
-            {
-                isFromInConnectionSelected = true;
-                selectedInConnectionID = commands[i].id;
-            }
+            int id = commands[currentSelectedCommandIndex].id;
+            commands[currentSelectedCommandIndex].isDeleted = true;
+            for (int i = 0; i <= connectionsLength; i++)
+                if (connections[i].connectionInID == id || connections[i].connectionOutID == id)
+                    connections[i].isDeleted = true;
+            isCommandModalOpened = false;
         }
-        if (isFromInConnectionSelected == true)
+        else if (resJson["save"] == true)
         {
-            isFromOutConnectionSelected = false;
-            selectedOutConnectionID = -1;
+            commands[currentSelectedCommandIndex].parameters = std::string(commandModal.parameters.input);
+            isCommandModalOpened = false;
         }
-        else if (isFromOutConnectionSelected == false)
+    }
+    else
+    {
+        isMouseLongPressed = true;
+
+        bool isACommandSelected = false;
+        int commandSelectedIndex = -1;
+        bool isOnRotationSlider = rotationSlider.isMouseOn(mousePos);
+        bool isOnScaleSlider = scaleSlider.isMouseOn(mousePos);
+
+        for (int i = 0; i <= commandsLength; i++)
+            if (commands[i].onMousePress(mousePos))
+                isACommandSelected = true, commandSelectedIndex = i;
+        for (int i = 0; i <= commandsLength; i++)
         {
-            if (commands[i].connectionOut.isMouseOn(commands[i].topLeftCorner, Point(mousePos.x, mousePos.y)))
+            if (commands[i].connectionIn.isMouseOn(commands[i].topLeftCorner, Point(mousePos.x, mousePos.y)))
             {
                 bool isAlreadyConnected = false;
                 for (int j = 0; j <= connectionsLength; j++)
-                    if (connections[j].isDeleted == false && connections[j].connectionOutID == commands[i].id)
+                    if (connections[j].isDeleted == false && connections[j].connectionInID == commands[i].id)
                     {
-                        isFromInConnectionSelected = true;
-                        selectedInConnectionID = connections[j].connectionInID;
+                        isFromOutConnectionSelected = true;
+                        selectedOutConnectionID = connections[j].connectionOutID;
                         connections[j].isDeleted = true;
                         isAlreadyConnected = true;
                     }
                 if (isAlreadyConnected == false)
                 {
-                    isFromOutConnectionSelected = true;
-                    selectedOutConnectionID = commands[i].id;
+                    isFromInConnectionSelected = true;
+                    selectedInConnectionID = commands[i].id;
+                }
+            }
+            if (isFromInConnectionSelected == true)
+            {
+                isFromOutConnectionSelected = false;
+                selectedOutConnectionID = -1;
+            }
+            else if (isFromOutConnectionSelected == false)
+            {
+                if (commands[i].connectionOut.isMouseOn(commands[i].topLeftCorner, Point(mousePos.x, mousePos.y)))
+                {
+                    bool isAlreadyConnected = false;
+                    for (int j = 0; j <= connectionsLength; j++)
+                        if (connections[j].isDeleted == false && connections[j].connectionOutID == commands[i].id)
+                        {
+                            isFromInConnectionSelected = true;
+                            selectedInConnectionID = connections[j].connectionInID;
+                            connections[j].isDeleted = true;
+                            isAlreadyConnected = true;
+                        }
+                    if (isAlreadyConnected == false)
+                    {
+                        isFromOutConnectionSelected = true;
+                        selectedOutConnectionID = commands[i].id;
+                    }
                 }
             }
         }
-    }
-    if (isFromOutConnectionSelected || isFromInConnectionSelected)
-    {
-        for (int i = 0; i <= commandsLength; i++)
-            commands[i].isSelected = false;
-        currentSelectedCommandIndex = -1;
-        otherEnd.x = mousePos.x;
-        otherEnd.y = mousePos.y;
-    }
-    else if (selectedToAddCommand != "")
-    {
-        if (isACommandSelected == false)
+        if (isFromOutConnectionSelected || isFromInConnectionSelected)
         {
-            if (mousePos.x > sf::VideoMode::getDesktopMode().width * 0.1 + 100 && mousePos.y > sf::VideoMode::getDesktopMode().height * 0.1 + 20 && isOnScaleSlider == false && isOnRotationSlider == false)
-            {
-                if (currentSelectedCommandIndex != -1)
-                {
-                    commands[currentSelectedCommandIndex].isSelected = false;
-                    currentSelectedCommandIndex = -1;
-                }
-                commandsLength++;
-                currentSelectedCommandIndex = commandsLength;
-                commands[commandsLength] = Command(selectedToAddCommand, Point(mousePos.x, mousePos.y), ++commandId);
-                xDiffOnLongPress = 0;
-                yDiffOnLongPress = 0;
-            }
-            else if (currentSelectedCommandIndex != -1)
-            {
-                if (isOnRotationSlider == false && isOnScaleSlider == false)
-                {
-                    commands[currentSelectedCommandIndex].isSelected = false;
-                    currentSelectedCommandIndex = -1;
-                }
-            }
+            for (int i = 0; i <= commandsLength; i++)
+                commands[i].isSelected = false;
+            currentSelectedCommandIndex = -1;
+            otherEnd.x = mousePos.x;
+            otherEnd.y = mousePos.y;
         }
-        else
+        else if (selectedToAddCommand != "")
         {
-            if (currentSelectedCommandIndex != commandSelectedIndex)
+            if (isACommandSelected == false)
             {
-                commands[currentSelectedCommandIndex].isSelected = false;
-                commands[commandSelectedIndex].isSelected = true;
-                currentSelectedCommandIndex = commandSelectedIndex;
+                if (mousePos.x > sf::VideoMode::getDesktopMode().width * 0.1 + 100 && mousePos.y > sf::VideoMode::getDesktopMode().height * 0.1 + 20 && isOnScaleSlider == false && isOnRotationSlider == false)
+                {
+                    if (currentSelectedCommandIndex != -1)
+                    {
+                        commands[currentSelectedCommandIndex].isSelected = false;
+                        currentSelectedCommandIndex = -1;
+                    }
+                    commandsLength++;
+                    currentSelectedCommandIndex = commandsLength;
+                    commands[commandsLength] = Command(selectedToAddCommand, Point(mousePos.x, mousePos.y), ++commandId);
+                    xDiffOnLongPress = 0;
+                    yDiffOnLongPress = 0;
+                }
+                else if (currentSelectedCommandIndex != -1)
+                {
+                    if (isOnRotationSlider == false && isOnScaleSlider == false)
+                    {
+                        commands[currentSelectedCommandIndex].isSelected = false;
+                        currentSelectedCommandIndex = -1;
+                    }
+                }
             }
+            else
+            {
+                if (currentSelectedCommandIndex != commandSelectedIndex)
+                {
+                    commands[currentSelectedCommandIndex].isSelected = false;
+                    commands[commandSelectedIndex].isSelected = true;
+                    currentSelectedCommandIndex = commandSelectedIndex;
+                }
 
+                yDiffOnLongPress = mousePos.y - commands[commandSelectedIndex].topLeftCorner.y;
+                xDiffOnLongPress = mousePos.x - commands[commandSelectedIndex].topLeftCorner.x;
+            }
+        }
+        else if (isACommandSelected == true)
+        {
+            if (commandSelectedIndex != currentSelectedCommandIndex)
+                commands[currentSelectedCommandIndex].isSelected = false, currentSelectedCommandIndex = commandSelectedIndex;
+            commands[commandSelectedIndex].isSelected = true;
             yDiffOnLongPress = mousePos.y - commands[commandSelectedIndex].topLeftCorner.y;
             xDiffOnLongPress = mousePos.x - commands[commandSelectedIndex].topLeftCorner.x;
         }
-    }
-    else if (isACommandSelected == true)
-    {
-        if (commandSelectedIndex != currentSelectedCommandIndex)
-            commands[currentSelectedCommandIndex].isSelected = false, currentSelectedCommandIndex = commandSelectedIndex;
-        commands[commandSelectedIndex].isSelected = true;
-        yDiffOnLongPress = mousePos.y - commands[commandSelectedIndex].topLeftCorner.y;
-        xDiffOnLongPress = mousePos.x - commands[commandSelectedIndex].topLeftCorner.x;
-    }
-    else
-    {
-        if (currentSelectedCommandIndex != -1)
-            if (isOnScaleSlider == true || isOnRotationSlider == true)
-            {
-                if (isOnRotationSlider)
-                    commands[currentSelectedCommandIndex].rotateAt(rotationSlider.getSliderValue());
-                if (isOnScaleSlider)
-                    commands[currentSelectedCommandIndex].scaleAt(scaleSlider.getSliderValue() / 4.0f);
-            }
-            else
-                commands[currentSelectedCommandIndex].isSelected = false, currentSelectedCommandIndex = -1;
-    }
-    if (isACommandSelected == false)
-        for (int i = 0; i < defaultButtonsLength; i++)
-            if (defaultButtons[i].onMousePress(mousePos))
-                if (defaultButtons[i].isSelected == false)
+        else
+        {
+            if (currentSelectedCommandIndex != -1)
+                if (isOnScaleSlider == true || isOnRotationSlider == true)
                 {
-                    for (int j = 0; j < defaultButtonsLength; j++)
-                        defaultButtons[j].isSelected = false;
-                    defaultButtons[i].isSelected = true;
-                    selectedToAddCommand = std::string(defaultButtons[i].btnText);
+                    if (isOnRotationSlider)
+                        commands[currentSelectedCommandIndex].rotateAt(rotationSlider.getSliderValue());
+                    if (isOnScaleSlider)
+                        commands[currentSelectedCommandIndex].scaleAt(scaleSlider.getSliderValue() / 4.0f);
                 }
                 else
-                    defaultButtons[i].isSelected = false, selectedToAddCommand = "";
-    if (quitButton.onMousePress(mousePos))
-    {
-        send(clientSocket, "exit", 4, 0);
-        close(clientSocket);
-        win.close();
+                    commands[currentSelectedCommandIndex].isSelected = false, currentSelectedCommandIndex = -1;
+        }
+        if (isACommandSelected == false)
+            for (int i = 0; i < defaultButtonsLength; i++)
+                if (defaultButtons[i].onMousePress(mousePos))
+                    if (defaultButtons[i].isSelected == false)
+                    {
+                        for (int j = 0; j < defaultButtonsLength; j++)
+                            defaultButtons[j].isSelected = false;
+                        defaultButtons[i].isSelected = true;
+                        selectedToAddCommand = std::string(defaultButtons[i].btnText);
+                    }
+                    else
+                        defaultButtons[i].isSelected = false, selectedToAddCommand = "";
+        if (quitButton.onMousePress(mousePos))
+        {
+            send(clientSocket, "exit", 4, 0);
+            close(clientSocket);
+            win.close();
+        }
     }
 }
 
@@ -261,10 +329,6 @@ void CommandMaker::onMouseRelease(sf::Vector2f mousePos)
     isFromInConnectionSelected = false;
 }
 
-void CommandMaker::onTextEntered(sf::Event e)
-{
-}
-
 void CommandMaker::draw(sf::RenderWindow &win, sf::Font font)
 {
     container.drawCustom(Point(0, 0), 0, 1, win, sf::Color::Black, sf::Color::Black);
@@ -276,8 +340,8 @@ void CommandMaker::draw(sf::RenderWindow &win, sf::Font font)
     rotationSlider.draw(win, font);
     scaleSlider.draw(win, font);
     quitButton.draw(win, font);
-    saveButton.drawCustom(win,font);
-    saveAsButton.drawCustom(win,font);
+    saveButton.drawCustom(win, font);
+    saveAsButton.drawCustom(win, font);
     for (int i = 0; i <= connectionsLength; i++)
     {
         Point in, out;
@@ -353,4 +417,6 @@ void CommandMaker::draw(sf::RenderWindow &win, sf::Font font)
         win.draw(line2, 2, sf::Lines);
         win.draw(line3, 2, sf::Lines);
     }
+    if (isCommandModalOpened)
+        commandModal.draw(win, font);
 }

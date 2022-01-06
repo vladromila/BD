@@ -81,6 +81,10 @@ int main()
             {
                 mainApp.onMousePress(sf::Vector2f(mousePos), window);
             }
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right)
+            {
+                mainApp.onMouseRightPress(sf::Vector2f(mousePos), window);
+            }
             if (event.type == sf::Event::MouseButtonReleased)
             {
                 mainApp.onMouseRelease(sf::Vector2f(mousePos));

@@ -4,6 +4,7 @@
 #include "../../../sourceFiles/Command.cpp"
 #include "../../../sourceFiles/subcomponents/Slider.cpp"
 #include "../../../sourceFiles/subcomponents/Connection.cpp"
+#include "../../../sourceFiles/subcomponents/CommandModal.cpp"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -44,6 +45,8 @@ class CommandMaker
     int connectionsLength = -1;
     Connection connections[100];
 
+    CommandModal commandModal;
+
     bool isFromInConnectionSelected = false;
     bool isFromOutConnectionSelected = false;
 
@@ -70,10 +73,16 @@ class CommandMaker
     Button saveButton;
     Button saveAsButton;
 
+    bool isCommandModalOpened = false;
+
+    Point startPoint;
+    Point endPoint;
+
 public:
     CommandMaker();
     CommandMaker(int clientSocket, json userData);
     void onMouseMove(sf::Vector2f mousePos);
+    void onMouseRightPress(sf::Vector2f mousePos, sf::RenderWindow &win);
     void onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win);
     void onMouseRelease(sf::Vector2f mousePos);
     void onTextEntered(sf::Event e);

@@ -4,7 +4,6 @@
 #include "../../utils/GlobalVariables.h"
 class TextInput
 {
-    char input[100];
     char placeholder[50];
     Rectangle container;
     Point topLeftCorner;
@@ -19,6 +18,7 @@ class TextInput
     std::string errorMessage="";
 
 public:
+    char input[100];
     TextInput();
     TextInput(Point topLeftCorner,int w,int h,int fontSize,const char placeholder[],bool securedTextEntry);
     void onTextEntered(sf::Event e);
