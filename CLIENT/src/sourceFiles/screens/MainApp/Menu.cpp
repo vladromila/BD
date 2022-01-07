@@ -1,13 +1,13 @@
 #include "../../../headers/screens/MainApp/Menu.h"
 
-Menu::Menu() : menuTitleOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.5, sf::VideoMode::getDesktopMode().height * 0.29),
+Menu::Menu() : menuTitleOrigin((sf::VideoMode::getDesktopMode().width) * 0.5, sf::VideoMode::getDesktopMode().height * 0.29),
                menuTitle(menuTitleOrigin, sf::VideoMode::getDesktopMode().height * 0.1, "Menu"),
-               newCommandButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.38, sf::VideoMode::getDesktopMode().height * 0.38),
-               newCommandButton(newCommandButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.24, sf::VideoMode::getDesktopMode().height * 0.06, sf::VideoMode::getDesktopMode().height * 0.035, "New Command", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White),
-               savedCommandsButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.38, sf::VideoMode::getDesktopMode().height * 0.48),
-               savedCommandsButton(savedCommandsButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.24, sf::VideoMode::getDesktopMode().height * 0.06, sf::VideoMode::getDesktopMode().height * 0.035, "Saved Commands", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White),
-               exitButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.38, sf::VideoMode::getDesktopMode().height * 0.58),
-               exitButton(exitButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.24, sf::VideoMode::getDesktopMode().height * 0.06, sf::VideoMode::getDesktopMode().height * 0.035, "Exit", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White)
+               newCommandButtonOrigin((sf::VideoMode::getDesktopMode().width) * 0.38, sf::VideoMode::getDesktopMode().height * 0.38),
+               newCommandButton(newCommandButtonOrigin, (sf::VideoMode::getDesktopMode().width) * 0.24, sf::VideoMode::getDesktopMode().height * 0.06, sf::VideoMode::getDesktopMode().height * 0.035, "New Command", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White),
+               savedCommandsButtonOrigin((sf::VideoMode::getDesktopMode().width) * 0.38, sf::VideoMode::getDesktopMode().height * 0.48),
+               savedCommandsButton(savedCommandsButtonOrigin, (sf::VideoMode::getDesktopMode().width) * 0.24, sf::VideoMode::getDesktopMode().height * 0.06, sf::VideoMode::getDesktopMode().height * 0.035, "Saved Commands", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White),
+               exitButtonOrigin((sf::VideoMode::getDesktopMode().width) * 0.38, sf::VideoMode::getDesktopMode().height * 0.58),
+               exitButton(exitButtonOrigin, (sf::VideoMode::getDesktopMode().width) * 0.24, sf::VideoMode::getDesktopMode().height * 0.06, sf::VideoMode::getDesktopMode().height * 0.035, "Exit", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White)
 {
 }
 

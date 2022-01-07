@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include "./src/globalHandler.cpp"
 #include "/usr/include/mysql/mysql.h"
-#define PORT 3000
+#define PORT 3003
 
 struct connection_details
 {
@@ -99,8 +99,25 @@ int main()
 
 			while (1)
 			{
-				recv(newSocket, buffer, 1024, 0);
-				if (strncmp(buffer, "exit",4) == 0)
+				char nr[10];
+				recv(newSocket, buffer, 1, 0);
+				while (buffer[0] != '~')
+				{
+					buffer[1] = '\0';
+					strcat(nr, buffer);
+					bzero(buffer, sizeof(buffer));
+					recv(newSocket, buffer, 1, 0);
+				}
+				bzero(buffer, sizeof(buffer));
+
+				// printf("%s\n", nr);
+
+				int bufSize = atoi(nr);
+				bzero(nr, sizeof(nr));
+
+				recv(newSocket, buffer, bufSize + 1, 0);
+
+				if (strncmp(buffer, "exit", 4) == 0)
 				{
 					printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 					break;
@@ -109,7 +126,7 @@ int main()
 				{
 					printf("Client: %s\n", buffer);
 					std::string res = requestHandler(buffer, con);
-					printf("%s\n",res.c_str());
+					// printf("%s\n", res.c_str());
 					send(newSocket, res.c_str(), res.size() + 1, 0);
 					bzero(buffer, sizeof(buffer));
 				}

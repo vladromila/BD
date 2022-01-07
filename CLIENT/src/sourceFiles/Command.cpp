@@ -7,20 +7,19 @@ Command::Command()
 Command::Command(std::string commandName, Point origin, int id)
 {
     this->id = id;
-    isSelected = true;
     topLeftCorner.changeValues(origin.x, origin.y);
     this->commandName = commandName;
 
-    Point containerOrigin(40 - ((commandName.size()) * 20 + 80) / 2, 5 - INITIAL_COMMAND_HEIGHT / 2);
-    container = Rectangle(containerOrigin, (commandName.size()) * 20, INITIAL_COMMAND_HEIGHT - 10);
+    Point containerOrigin(40 - ((commandName.size()) * 25 + 80) / 2, 5 - INITIAL_COMMAND_HEIGHT / 2);
+    container = Rectangle(containerOrigin, (commandName.size()) * 25, INITIAL_COMMAND_HEIGHT - 10);
 
     connectionIn.changeValues(0 - (container.w + 80) / 2, 0);
     cip.changeValues(0 - (container.w) / 2 - 3, 0);
     connectionOut.changeValues(container.w + 80 - (container.w + 80) / 2, 0);
     cop.changeValues(container.w - (container.w) / 2 + 3, 0);
 
-    Point selectedContainerOrigin(-((commandName.size()) * 20 + 80) / 2, -INITIAL_COMMAND_HEIGHT / 2);
-    selectedContainer = Rectangle(selectedContainerOrigin, (commandName.size()) * 20 + 80, INITIAL_COMMAND_HEIGHT);
+    Point selectedContainerOrigin(-((commandName.size()) * 25 + 80) / 2, -INITIAL_COMMAND_HEIGHT / 2);
+    selectedContainer = Rectangle(selectedContainerOrigin, (commandName.size()) * 25 + 80, INITIAL_COMMAND_HEIGHT);
 }
 
 void Command::scaleAt(float scale)

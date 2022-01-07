@@ -19,27 +19,27 @@ RegisterScreen::RegisterScreen()
 RegisterScreen::RegisterScreen(int clientSocket)
 {
     this->clientSocket = clientSocket;
-    Point emailAdressOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.30);
-    emailAddress = TextInput(emailAdressOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false);
+    Point emailAdressOrigin((sf::VideoMode::getDesktopMode().width) * 0.2, sf::VideoMode::getDesktopMode().height * 0.30);
+    emailAddress = TextInput(emailAdressOrigin, (sf::VideoMode::getDesktopMode().width) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false);
 
-    Point firstNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.39);
-    firstName = TextInput(firstNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your first name.", false);
+    Point firstNameOrigin((sf::VideoMode::getDesktopMode().width) * 0.2, sf::VideoMode::getDesktopMode().height * 0.39);
+    firstName = TextInput(firstNameOrigin, (sf::VideoMode::getDesktopMode().width) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your first name.", false);
 
-    Point lastNameOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.48);
-    lastName = TextInput(lastNameOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your last name.", false);
+    Point lastNameOrigin((sf::VideoMode::getDesktopMode().width) * 0.2, sf::VideoMode::getDesktopMode().height * 0.48);
+    lastName = TextInput(lastNameOrigin, (sf::VideoMode::getDesktopMode().width) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your last name.", false);
 
-    Point passwordOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.57);
-    password = TextInput(passwordOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your password.", true);
+    Point passwordOrigin((sf::VideoMode::getDesktopMode().width) * 0.2, sf::VideoMode::getDesktopMode().height * 0.57);
+    password = TextInput(passwordOrigin, (sf::VideoMode::getDesktopMode().width) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your password.", true);
 
-    Point passwordConfirmOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.66);
-    passwordConfirm = TextInput(passwordConfirmOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Confirm the password.", true);
+    Point passwordConfirmOrigin((sf::VideoMode::getDesktopMode().width) * 0.2, sf::VideoMode::getDesktopMode().height * 0.66);
+    passwordConfirm = TextInput(passwordConfirmOrigin, (sf::VideoMode::getDesktopMode().width) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Confirm the password.", true);
 
-    Point registerButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.45, sf::VideoMode::getDesktopMode().height * 0.75);
-    registerButton = Button(registerButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.1, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Register");
-    Point loginButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.46, sf::VideoMode::getDesktopMode().height * 0.81);
-    loginButton = Button(loginButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.08, sf::VideoMode::getDesktopMode().height * 0.03, sf::VideoMode::getDesktopMode().height * 0.01875, "Login");
+    Point registerButtonOrigin((sf::VideoMode::getDesktopMode().width) * 0.45, sf::VideoMode::getDesktopMode().height * 0.75);
+    registerButton = Button(registerButtonOrigin, (sf::VideoMode::getDesktopMode().width) * 0.1, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Register");
+    Point loginButtonOrigin((sf::VideoMode::getDesktopMode().width) * 0.46, sf::VideoMode::getDesktopMode().height * 0.81);
+    loginButton = Button(loginButtonOrigin, (sf::VideoMode::getDesktopMode().width) * 0.08, sf::VideoMode::getDesktopMode().height * 0.03, sf::VideoMode::getDesktopMode().height * 0.01875, "Login");
 
-    Point titleOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.505, sf::VideoMode::getDesktopMode().height * 0.24);
+    Point titleOrigin((sf::VideoMode::getDesktopMode().width) * 0.505, sf::VideoMode::getDesktopMode().height * 0.24);
 
     title = Word(titleOrigin, sf::VideoMode::getDesktopMode().height * 0.08, "Register");
 }
@@ -83,7 +83,7 @@ std::string RegisterScreen::onMousePress(sf::Vector2f mousePos)
             {"passwordConfirm", passc}};
 
         std::string reqStr = reqBody.dump();
-        write(clientSocket, reqStr.c_str(), reqBody.dump().size() + 1);
+        send(clientSocket, reqStr.c_str(), reqBody.dump().size() + 1, 0);
         char res[1024];
         bzero(res, 1024);
         read(clientSocket, res, 1024);
@@ -93,11 +93,11 @@ std::string RegisterScreen::onMousePress(sf::Vector2f mousePos)
         // printf("%s \n", resJson.dump().c_str());
         if (resJson["success"] == true)
         {
-            fRes["loggedIn"]=true;
-            fRes["data"]["email"]=email;
-            fRes["data"]["firstName"]=fn;
-            fRes["data"]["lastName"]=ln;
-            fRes["data"]["session_token"]=resJson["session_token"];
+            fRes["loggedIn"] = true;
+            fRes["data"]["email"] = email;
+            fRes["data"]["firstName"] = fn;
+            fRes["data"]["lastName"] = ln;
+            fRes["data"]["session_token"] = resJson["session_token"];
             std::fstream configFile;
             char homeDir[256];
             strcpy(homeDir, getenv("HOME"));
@@ -123,7 +123,7 @@ std::string RegisterScreen::onMousePress(sf::Vector2f mousePos)
     }
     if (loginButton.onMousePress(mousePos) == true)
     {
-        fRes["switchToLogin"]=true;
+        fRes["switchToLogin"] = true;
         return fRes.dump();
     }
     return fRes.dump();

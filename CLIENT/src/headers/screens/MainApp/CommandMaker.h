@@ -53,8 +53,8 @@ class CommandMaker
     int selectedInConnectionID = -1;
     int selectedOutConnectionID = -1;
 
-    int defaultButtonsLength = 9;
-    Button defaultButtons[10];
+    int defaultButtonsLength = 15;
+    Button defaultButtons[16];
     Button quitButton;
 
     Slider rotationSlider;
@@ -78,9 +78,14 @@ class CommandMaker
     Point startPoint;
     Point endPoint;
 
+    Button editComponent;
+    Button deleteComponent;
+    bool isRunnable = false;
+
 public:
     CommandMaker();
     CommandMaker(int clientSocket, json userData);
+    CommandMaker(int clientSocket, json userData, std::string data);
     void onMouseMove(sf::Vector2f mousePos);
     void onMouseRightPress(sf::Vector2f mousePos, sf::RenderWindow &win);
     void onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win);

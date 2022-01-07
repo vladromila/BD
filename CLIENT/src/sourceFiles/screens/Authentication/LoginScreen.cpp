@@ -16,16 +16,16 @@ LoginScreen::LoginScreen()
 {
 }
 
-LoginScreen::LoginScreen(int clientSocket) : titleOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.5, sf::VideoMode::getDesktopMode().height * 0.29),
+LoginScreen::LoginScreen(int clientSocket) : titleOrigin((sf::VideoMode::getDesktopMode().width) * 0.5, sf::VideoMode::getDesktopMode().height * 0.29),
                                              title(titleOrigin, sf::VideoMode::getDesktopMode().height * 0.08, "Login"),
-                                             emailAddressOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.35),
-                                             emailAddress(emailAddressOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false),
-                                             passwordOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.2, sf::VideoMode::getDesktopMode().height * 0.44),
-                                             password(passwordOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your password.", true),
-                                             loginButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.45, sf::VideoMode::getDesktopMode().height * 0.53),
-                                             loginButton(loginButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.1, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Login"),
-                                             registerButtonOrigin((sf::VideoMode::getDesktopMode().width - 100) * 0.46, sf::VideoMode::getDesktopMode().height * 0.59),
-                                             registerButton(registerButtonOrigin, (sf::VideoMode::getDesktopMode().width - 100) * 0.08, sf::VideoMode::getDesktopMode().height * 0.03, sf::VideoMode::getDesktopMode().height * 0.01875, "Register")
+                                             emailAddressOrigin((sf::VideoMode::getDesktopMode().width) * 0.2, sf::VideoMode::getDesktopMode().height * 0.35),
+                                             emailAddress(emailAddressOrigin, (sf::VideoMode::getDesktopMode().width) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false),
+                                             passwordOrigin((sf::VideoMode::getDesktopMode().width) * 0.2, sf::VideoMode::getDesktopMode().height * 0.44),
+                                             password(passwordOrigin, (sf::VideoMode::getDesktopMode().width) * 0.6, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your password.", true),
+                                             loginButtonOrigin((sf::VideoMode::getDesktopMode().width) * 0.45, sf::VideoMode::getDesktopMode().height * 0.53),
+                                             loginButton(loginButtonOrigin, (sf::VideoMode::getDesktopMode().width) * 0.1, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Login"),
+                                             registerButtonOrigin((sf::VideoMode::getDesktopMode().width) * 0.46, sf::VideoMode::getDesktopMode().height * 0.59),
+                                             registerButton(registerButtonOrigin, (sf::VideoMode::getDesktopMode().width) * 0.08, sf::VideoMode::getDesktopMode().height * 0.03, sf::VideoMode::getDesktopMode().height * 0.01875, "Register")
 
 {
     this->clientSocket = clientSocket;
@@ -60,11 +60,14 @@ std::string LoginScreen::onMousePress(sf::Vector2f mousePos)
             {"email", email},
             {"password", pass}};
 
-        std::string reqStr = reqBody.dump();
-        write(clientSocket, reqStr.c_str(), reqBody.dump().size() + 1);
+        std::string reqStr = std::to_string(reqBody.dump().length() + 1);
+        reqStr += '~';
+        reqStr += reqBody.dump();
+        printf("%s\n", reqStr.c_str());
+        send(clientSocket, reqStr.c_str(), reqStr.length() + 1, 0);
         char res[1024];
         bzero(res, 1024);
-        read(clientSocket, res, 1024);
+        recv(clientSocket, res, 1024, 0);
         std::string resString;
         resString.append(res);
         json resJson = json::parse(resString);
@@ -96,7 +99,7 @@ std::string LoginScreen::onMousePress(sf::Vector2f mousePos)
     }
     if (registerButton.onMousePress(mousePos) == true)
     {
-        fRes["switchToRegister"]=true;
+        fRes["switchToRegister"] = true;
         return fRes.dump();
     }
     return fRes.dump();

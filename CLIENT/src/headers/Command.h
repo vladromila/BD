@@ -3,13 +3,13 @@
 
 class Command
 {
-    std::string commandName;
     bool hasSetOrigin = false;
     Rectangle container;
     Rectangle selectedContainer;
     sf::Text letterComponent;
 
 public:
+    std::string commandName;
 bool isStartCommand=false;
 bool isEndCommand=false;
     std::string parameters="";

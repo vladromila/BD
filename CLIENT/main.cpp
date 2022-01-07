@@ -10,7 +10,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT 3000
+#define PORT 3003
 
 int main()
 {
@@ -29,8 +29,8 @@ int main()
     memset(&serverAddr, '\0', sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(PORT);
-    serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
-    // serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    // serverAddr.sin_addr.s_addr = inet_addr("167.172.38.89");
+    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     ret = connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
     if (ret < 0)

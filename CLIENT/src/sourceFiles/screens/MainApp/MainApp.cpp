@@ -1,5 +1,43 @@
 #include "../../../headers/screens/MainApp/MainApp.h"
 
+static const std::string base64_chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789+/";
+
+static inline bool is_base64(unsigned char c)
+{
+    return (isalnum(c) || (c == '+') || (c == '/'));
+}
+
+std::string base64_decode(const std::string &data)
+{
+    std::array<unsigned char, 4> char_array;
+    std::string ret;
+
+    for (auto begin = data.begin(), end = data.end(), it = begin; it != end; ++it)
+    {
+        if (!is_base64(*it))
+            break;
+
+        auto index = it - begin;
+
+        char_array[index % char_array.size()] = *it;
+
+        if (index % char_array.size() != char_array.size() - 1)
+            continue;
+
+        for (auto &character : char_array)
+            character = static_cast<unsigned char>(base64_chars.find(character));
+
+        ret += (char_array[0] << 2) + ((char_array[1] & 0x30) >> 4);
+        ret += ((char_array[1] & 0xf) << 4) + ((char_array[2] & 0x3c) >> 2);
+        ret += ((char_array[2] & 0x3) << 6) + char_array[3];
+    }
+
+    return ret;
+}
+
 MainApp::MainApp()
 {
 }
@@ -38,10 +76,15 @@ MainApp::MainApp(int clientSocket) : auth(clientSocket)
         getline(configFile, savedUserData);
         json toSendBody = json::parse(savedUserData);
         toSendBody["reqType"] = "loginWithToken";
-        write(clientSocket, toSendBody.dump().c_str(), toSendBody.dump().size() + 1);
+        std::string toSendString = std::to_string(toSendBody.dump().length() + 1);
+        toSendString += '~';
+        toSendString += toSendBody.dump();
+        printf("%s %d\n", toSendString.c_str(), toSendString.length() + 1);
+        send(clientSocket, toSendString.c_str(), toSendString.length() + 1, 0);
 
         char res[1024];
-        read(clientSocket, res, 1024);
+        recv(clientSocket, res, 1024, 0);
+        printf("%s\n", res);
         std::string resString;
         resString.append(res);
         json resJson = json::parse(resString);
@@ -74,6 +117,13 @@ void MainApp::onMouseRightPress(sf::Vector2f mousePos, sf::RenderWindow &win)
 
 void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
 {
+    //  win.create(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "DDP by Romila Vlad Alexandru", sf::Style::Default);
+    //             win.clear();
+    //             char filename[1024];
+    //             FILE *f = popen("zenity --file-selection", "r");
+    //             fgets(filename, 1024, f);
+    //             win.create(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "DDP by Romila Vlad Alexandru", sf::Style::Fullscreen);
+
     if (screen == 0)
     {
         std::string authRes = auth.onMousePress(mousePos);
@@ -89,12 +139,12 @@ void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
         int menuRes = menu.onMousePress(mousePos);
         if (menuRes == 0)
         {
-            commandMaker = CommandMaker(clientSocket, userData);
+            commandMaker = CommandMaker(clientSocket, userData, "{\"biggestID\":1,\"commands\":[{\"parameters\":\"\", \"commandName\":\"cp\",\"id\":2,\"rotationAngle\":0,\"scale\":1.0,\"x\":1463,\"y\":417}],\"connections\":[{\"connectionInID\":2,\"connectionOutID\":0},{\"connectionInID\":1,\"connectionOutID\":2}]}");
             screen = 2;
         }
         else if (menuRes == 2)
         {
-            send(clientSocket, "exit", 4, 0);
+            send(clientSocket, "5~exit", 6, 0);
             close(clientSocket);
             win.close();
         }
