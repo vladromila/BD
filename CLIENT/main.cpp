@@ -10,10 +10,17 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT 3003
+#define PORT 3000
 
 int main()
 {
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    int W = sf::VideoMode::getDesktopMode().width;
+    int H = sf::VideoMode::getDesktopMode().height;
+    sf::RenderWindow window(sf::VideoMode(W, H), "DDP by Romila Vlad Alexandru", sf::Style::Fullscreen);
+    sf::Font font;
+    font.loadFromFile("font2.ttf");
     int clientSocket, ret;
     struct sockaddr_in serverAddr;
     char buffer[1024];
@@ -40,14 +47,6 @@ int main()
     }
     printf("[+]Connected to Server.\n");
 
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-    int W = sf::VideoMode::getDesktopMode().width;
-    int H = sf::VideoMode::getDesktopMode().height;
-    sf::RenderWindow window(sf::VideoMode(W, H), "DDP by Romila Vlad Alexandru", sf::Style::Fullscreen);
-
-    sf::Font font;
-    font.loadFromFile("font.ttf");
     MainApp mainApp(clientSocket);
     while (window.isOpen())
     {

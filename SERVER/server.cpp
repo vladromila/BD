@@ -8,7 +8,8 @@
 #include <arpa/inet.h>
 #include "./src/globalHandler.cpp"
 #include "/usr/include/mysql/mysql.h"
-#define PORT 3003
+#include <time.h>
+#define PORT 3000
 
 struct connection_details
 {
@@ -51,7 +52,7 @@ int main()
 
 	socklen_t addr_size;
 
-	char buffer[1024];
+	char buffer[1000000];
 	pid_t childpid;
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);

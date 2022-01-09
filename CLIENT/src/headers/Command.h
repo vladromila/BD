@@ -9,10 +9,11 @@ class Command
     sf::Text letterComponent;
 
 public:
+    bool requiresAndOp = false;
     std::string commandName;
-bool isStartCommand=false;
-bool isEndCommand=false;
-    std::string parameters="";
+    bool isStartCommand = false;
+    bool isEndCommand = false;
+    std::string parameters = "";
     Point connectionIn;
     Point connectionOut;
     Point cip;
@@ -20,7 +21,7 @@ bool isEndCommand=false;
     int id;
     Point topLeftCorner;
     bool isSelected = false;
-    bool isDeleted=false;
+    bool isDeleted = false;
     float scale = 1;
     int rotationAngle = 0;
     int initialLetterX;

@@ -3,7 +3,9 @@
 #include <string>
 #include <openssl/sha.h>
 #include "/usr/include/mysql/mysql.h"
+#include <sys/stat.h>
 #include <time.h>
+
 using json = nlohmann::json;
 
 bool isChar(char c)
@@ -82,6 +84,245 @@ void sha256_string(const char *string, char outputBuffer[65])
         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
     }
     outputBuffer[64] = 0;
+}
+
+std::string runCommand(std::string email, std::string execDate, std::string trc, MYSQL *con)
+{
+    json res = {
+        {"success", false},
+        {"runError", ""}};
+    MYSQL_RES *dbRes;
+    char initial_query[1024];
+    int initial_query_stat;
+
+    sprintf(initial_query, "SELECT id FROM users WHERE email='%s'", email.c_str());
+
+    mysql_query(con, initial_query);
+    dbRes = mysql_store_result(con);
+
+    MYSQL_ROW userId = mysql_fetch_row(dbRes);
+    std::string uID = std::string(userId[0]);
+    bool rootFolderExists = false;
+    bool userFolderExists = false;
+    bool commandExecutionExists = false;
+    char homeDir[256];
+    strcpy(homeDir, getenv("HOME"));
+    strcat(homeDir, "/DDP");
+    struct stat st;
+    if (stat(homeDir, &st) == 0)
+    {
+        if (!(st.st_mode & S_IFDIR != 0))
+        {
+            rootFolderExists = false;
+        }
+        else
+            rootFolderExists = true;
+    }
+    else
+    {
+        rootFolderExists = false;
+    }
+
+    if (rootFolderExists)
+        printf("Root folder exists.\n");
+    else
+    {
+        const int dir_err = mkdir(homeDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (-1 == dir_err)
+        {
+            printf("Error creating root folder.\n");
+        }
+        else
+            printf("Root folder created.\n");
+    }
+    strcat(homeDir, "/");
+    strcat(homeDir, uID.c_str());
+    if (stat(homeDir, &st) == 0)
+    {
+        if (!(st.st_mode & S_IFDIR != 0))
+        {
+            userFolderExists = false;
+        }
+        else
+            userFolderExists = true;
+    }
+    else
+    {
+        userFolderExists = false;
+    }
+
+    if (userFolderExists)
+        printf("User folder exists.\n");
+    else
+    {
+        const int dir_err = mkdir(homeDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (-1 == dir_err)
+        {
+            printf("Error creating user folder.\n");
+        }
+        else
+            printf("User folder created.\n");
+    }
+
+    strcat(homeDir, "/");
+    strcat(homeDir, execDate.c_str());
+    const int dir_err = mkdir(homeDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (-1 == dir_err)
+    {
+        printf("Error creating execution folder.\n");
+    }
+    else
+        printf("Execution folder created.\n");
+    char outputPath[512];
+    char errorPath[512];
+    char resultPath[512];
+
+    strcpy(outputPath, homeDir);
+    strcpy(errorPath, homeDir);
+    strcpy(resultPath, homeDir);
+    strcat(outputPath, "/output.txt");
+    strcat(errorPath, "/error.txt");
+    strcat(resultPath, "/result.txt");
+
+    strcat(homeDir, "/command.sh");
+
+    std::fstream executionFile;
+    executionFile.open(homeDir, std::ios::out);
+    executionFile << trc.c_str();
+    executionFile.close();
+
+    std::string toRunCommand;
+    // toRunCommand+="chmod 777 ";
+    // toRunCommand+=std::string(homeDir);
+    toRunCommand += "sh ";
+    toRunCommand += std::string(homeDir);
+    toRunCommand += " >";
+    toRunCommand += std::string(outputPath);
+    toRunCommand += " 2>";
+    toRunCommand += std::string(errorPath);
+    printf("%s\n", toRunCommand.c_str());
+    system(toRunCommand.c_str());
+
+    std::string finalRes;
+    std::string row;
+
+    std::fstream outputFile;
+    outputFile.open(outputPath, std::ios::in);
+
+    while (getline(outputFile, row))
+    {
+        finalRes += row;
+        finalRes+='\n';
+    }
+    outputFile.close();
+
+    std::fstream errorFile;
+
+    errorFile.open(errorPath, std::ios::in);
+
+    while (getline(errorFile, row))
+    {
+        finalRes += row;
+        finalRes+='\n';
+    }
+    errorFile.close();
+
+    std::fstream resultFile;
+    resultFile.open(resultPath, std::ios::out);
+    resultFile << finalRes;
+
+    resultFile.close();
+    res["response"]=finalRes;
+    std::string fres=std::to_string(res.dump().length()+1);
+    fres+='~';
+    fres+=res.dump();
+    return fres;
+}
+
+std::string saveNewCommand(std::string email, std::string commandName, std::string commandData, MYSQL *con)
+{
+    json res = {
+        {"success", false},
+        {"saveError", ""}};
+    MYSQL_RES *dbRes;
+    char initial_query[1024];
+    int initial_query_stat;
+    sprintf(initial_query, "SELECT id FROM commands WHERE name='%s'", commandName.c_str());
+
+    mysql_query(con, initial_query);
+    dbRes = mysql_store_result(con);
+
+    if (mysql_num_rows(dbRes))
+    {
+        res["saveError"] = "A command with this name already exists";
+        return res.dump();
+    }
+
+    mysql_free_result(dbRes);
+    bzero(initial_query, sizeof(initial_query));
+
+    sprintf(initial_query, "SELECT id FROM users WHERE email='%s'", email.c_str());
+
+    mysql_query(con, initial_query);
+    dbRes = mysql_store_result(con);
+
+    MYSQL_ROW userId = mysql_fetch_row(dbRes);
+    std::string uID = std::string(userId[0]);
+
+    printf("%s\n", uID.c_str());
+
+    char query[1024 + commandData.length()];
+    int query_stat;
+    sprintf(query, "insert into commands(user_id,name,data, date) values(%s,'%s','%s',CURDATE())", uID.c_str(), commandName.c_str(), commandData.c_str());
+
+    // printf("%s\n", query);
+
+    query_stat = mysql_query(con, query);
+    if (query_stat != 0)
+    {
+        res["saveError"] = "Error saving the command.";
+        return res.dump();
+    }
+    else
+    {
+        mysql_free_result(dbRes);
+        bzero(initial_query, sizeof(initial_query));
+        sprintf(initial_query, "SELECT id FROM commands WHERE user_id='%s' ORDER BY id DESC", uID.c_str());
+        printf("%s\n\n", initial_query);
+        mysql_query(con, initial_query);
+        dbRes = mysql_store_result(con);
+
+        MYSQL_ROW currentIdString = mysql_fetch_row(dbRes);
+        std::string currentId = std::string(currentIdString[0]);
+
+        res["commandId"] = currentId;
+
+        res["success"] = true;
+        return res.dump();
+    }
+}
+
+std::string saveCommand(std::string commandId, std::string commandData, MYSQL *con)
+{
+    json res = {
+        {"success", false},
+        {"saveError", ""}};
+
+    char query[1024 + commandData.length()];
+    int query_stat;
+    sprintf(query, "UPDATE commands SET data='%s',date=CURDATE() WHERE id=%s", commandData.c_str(), commandId.c_str());
+
+    query_stat = mysql_query(con, query);
+    if (query_stat != 0)
+    {
+        res["saveError"] = "Error updating the command.";
+        return res.dump();
+    }
+    else
+    {
+        res["success"] = true;
+        return res.dump();
+    }
 }
 
 std::string login(std::string email, std::string password, MYSQL *con)
@@ -311,6 +552,12 @@ std::string requestHandler(char *r, MYSQL *con)
             return loginWithToken(req["email"], req["session_token"], con);
         else if (req["reqType"] == "login")
             return login(req["email"], req["password"], con);
+        else if (req["reqType"] == "saveNewCommand")
+            return saveNewCommand(req["email"], req["commandName"], req["commandData"], con);
+        else if (req["reqType"] == "saveCommand")
+            return saveCommand(req["commandId"], req["commandData"], con);
+        else if (req["reqType"] == "runCommand")
+            return runCommand(req["email"], req["execDate"], req["toRunCommand"], con);
         else
         {
             return failedRequest.dump();

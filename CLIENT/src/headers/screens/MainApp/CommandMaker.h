@@ -5,6 +5,8 @@
 #include "../../../sourceFiles/subcomponents/Slider.cpp"
 #include "../../../sourceFiles/subcomponents/Connection.cpp"
 #include "../../../sourceFiles/subcomponents/CommandModal.cpp"
+#include "../../../sourceFiles/subcomponents/SaveAsModal.cpp"
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -35,6 +37,7 @@ struct Action
 class CommandMaker
 {
     Rectangle container;
+    Rectangle runResultContainer;
     int clientSocket;
     json userData;
     int actionsLength = -1;
@@ -46,6 +49,7 @@ class CommandMaker
     Connection connections[100];
 
     CommandModal commandModal;
+    SaveAsModal saveAsModal;
 
     bool isFromInConnectionSelected = false;
     bool isFromOutConnectionSelected = false;
@@ -74,15 +78,26 @@ class CommandMaker
     Button saveAsButton;
 
     bool isCommandModalOpened = false;
+    bool isSaveAsModalOpened = false;
 
     Point startPoint;
     Point endPoint;
 
     Button editComponent;
     Button deleteComponent;
+
+    Button runCommand;
+    Button runCommandLocally;
     bool isRunnable = false;
 
+    std::string toRunCommand;
+    bool isRunResultScreenVisible = false;
+
+    std::string toShowResult="";
+
 public:
+    std::string generalCommandName = "";
+    std::string generalCommandId = "";
     CommandMaker();
     CommandMaker(int clientSocket, json userData);
     CommandMaker(int clientSocket, json userData, std::string data);

@@ -3,7 +3,7 @@
 CommandModal::CommandModal()
 {
     container = Rectangle(Point(sf::VideoMode().getDesktopMode().width * 0.15, sf::VideoMode().getDesktopMode().height * 0.2), sf::VideoMode().getDesktopMode().width * 0.7, sf::VideoMode().getDesktopMode().height * 0.55);
-    parameters = TextInput(Point(sf::VideoMode().getDesktopMode().width * 0.19, sf::VideoMode().getDesktopMode().height * 0.4), (sf::VideoMode::getDesktopMode().width) * 0.62 - 9, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter your email address.", false);
+    parameters = TextInput(Point(sf::VideoMode().getDesktopMode().width * 0.19, sf::VideoMode().getDesktopMode().height * 0.4), (sf::VideoMode::getDesktopMode().width) * 0.62 - 9, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.035, "Enter the command parameters", false);
 
     title.setString("Parameters:");
     title.setFillColor(sf::Color::Black);
@@ -18,6 +18,7 @@ CommandModal::CommandModal()
     saveButton = Button(Point(sf::VideoMode::getDesktopMode().width * 0.66, sf::VideoMode::getDesktopMode().height * 0.65), (sf::VideoMode::getDesktopMode().width) * 0.15, sf::VideoMode::getDesktopMode().height * 0.07, sf::VideoMode::getDesktopMode().height * 0.045, "Save", sf::Color(75, 181, 67), sf::Color(75, 181, 67), sf::Color::White, sf::Color(75, 181, 67), sf::Color::White, sf::Color(75, 181, 67));
     closeButton = Button(Point(sf::VideoMode::getDesktopMode().width * 0.47, sf::VideoMode::getDesktopMode().height * 0.65), (sf::VideoMode::getDesktopMode().width) * 0.15, sf::VideoMode::getDesktopMode().height * 0.07, sf::VideoMode::getDesktopMode().height * 0.045, "Close", sf::Color::Blue, sf::Color::Blue, sf::Color::White, sf::Color::Blue, sf::Color::White, sf::Color::Blue);
     deleteButton = Button(Point(sf::VideoMode::getDesktopMode().width * 0.19, sf::VideoMode::getDesktopMode().height * 0.65), (sf::VideoMode::getDesktopMode().width) * 0.24, sf::VideoMode::getDesktopMode().height * 0.07, sf::VideoMode::getDesktopMode().height * 0.045, "Delete Component", sf::Color::Red, sf::Color::Red, sf::Color::White, sf::Color::Red, sf::Color::White, sf::Color::Red);
+    requiredAndOp = Button(Point(sf::VideoMode::getDesktopMode().width * 0.375, sf::VideoMode::getDesktopMode().height * 0.5), (sf::VideoMode::getDesktopMode().width) * 0.25, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "Requires AND operator", sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::Blue, sf::Color::Blue, sf::Color(75, 181, 67), sf::Color::White, true);
 }
 
 void CommandModal::onMouseMove(sf::Vector2f mousePos)
@@ -25,9 +26,14 @@ void CommandModal::onMouseMove(sf::Vector2f mousePos)
     deleteButton.onMouseMove(mousePos);
     closeButton.onMouseMove(mousePos);
     saveButton.onMouseMove(mousePos);
+    requiredAndOp.onMouseMove(mousePos);
 }
 std::string CommandModal::onMousePress(sf::Vector2f mousePos)
 {
+    if (requiredAndOp.onMousePress(mousePos))
+    {
+        requiredAndOp.isSelected = !requiredAndOp.isSelected;
+    }
     json res = {{"save", false}, {"delete", false}, {"close", false}};
     parameters.onMousePress(mousePos);
     if (saveButton.onMousePress(mousePos))
@@ -55,6 +61,7 @@ void CommandModal::draw(sf::RenderWindow &win, sf::Font font)
     container.drawCustom(Point(0, 0), 0, 1, win, sf::Color(192, 192, 192), sf::Color::White);
     parameters.draw(win, font);
     win.draw(title);
+    requiredAndOp.drawCustom(win, font);
     deleteButton.drawCustom(win, font);
     saveButton.drawCustom(win, font);
     closeButton.drawCustom(win, font);
