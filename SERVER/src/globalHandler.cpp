@@ -233,6 +233,7 @@ std::string runCommand(std::string email, std::string execDate, std::string trc,
 
     resultFile.close();
     res["response"]=finalRes;
+    res["execDate"]=execDate;
     std::string fres=std::to_string(res.dump().length()+1);
     fres+='~';
     fres+=res.dump();
