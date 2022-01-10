@@ -106,7 +106,7 @@ std::string runCommand(std::string email, std::string execDate, std::string trc,
     bool userFolderExists = false;
     bool commandExecutionExists = false;
     char homeDir[256];
-    strcpy(homeDir, getenv("HOME"));
+    strcpy(homeDir, "/var/www");
     strcat(homeDir, "/DDP");
     struct stat st;
     if (stat(homeDir, &st) == 0)
