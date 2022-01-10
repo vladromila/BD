@@ -233,7 +233,7 @@ std::string runCommand(std::string email, std::string execDate, std::string trc,
 
     resultFile.close();
     res["response"]=finalRes;
-    res["commandForWebPreview"]="xdg-open http://167.172.38.89/executions/"+uID+"/"+execDate+"/output.txt";
+    res["commandForWebPreview"]="xdg-open http://167.172.38.89/executions/"+uID+"/"+execDate+"/result.txt";
     std::string fres=std::to_string(res.dump().length()+1);
     fres+='~';
     fres+=res.dump();
