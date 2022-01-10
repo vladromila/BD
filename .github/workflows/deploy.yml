@@ -14,4 +14,4 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }} 
-          script:  pm2 stop all && cd /root/DDP &&git pull origin master && cd SERVER && g++ -c server.cpp && g++ server.o -o server -l ssl -l crypto -L/usr/include/mysql/mysql -l mysqlclient && pm2 start 0
+          script:  pm2 stop all && cd /root/DDP &&git pull origin master && cd SERVER && g++ -c server.cpp && g++ server.o -o server -l ssl -l crypto -L/usr/include/mysql/mysql -l mysqlclient && pm2 start 0  
