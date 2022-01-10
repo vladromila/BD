@@ -62,8 +62,15 @@ CommandMaker::CommandMaker(int clientSocket, json userData) : container(Point(sf
     runCommand = Button(Point(sf::VideoMode().getDesktopMode().width * 0.92, sf::VideoMode().getDesktopMode().height * 0.07), sf::VideoMode::getDesktopMode().width * 0.08, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Run", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
     runCommandLocally = Button(Point(sf::VideoMode().getDesktopMode().width * 0.8 - 9, sf::VideoMode().getDesktopMode().height * 0.07), sf::VideoMode::getDesktopMode().width * 0.12, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Run locally", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
 
+    closeRunResultScreen = Button(Point(sf::VideoMode().getDesktopMode().width * 0.92, sf::VideoMode().getDesktopMode().height * 0.95), sf::VideoMode::getDesktopMode().width * 0.08, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Close", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
+    openResultInBrowser = Button(Point(sf::VideoMode().getDesktopMode().width * 0.76 - 9, sf::VideoMode().getDesktopMode().height * 0.95), sf::VideoMode::getDesktopMode().width * 0.16, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Open in browser", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
+
     deleteComponent = Button(Point(sf::VideoMode().getDesktopMode().width * 0.1 + 9, sf::VideoMode::getDesktopMode().height * 0.95 - 9), sf::VideoMode::getDesktopMode().width * 0.065, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "Delete", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White);
     editComponent = Button(Point(sf::VideoMode().getDesktopMode().width * 0.16 + 27, sf::VideoMode::getDesktopMode().height * 0.95 - 9), sf::VideoMode::getDesktopMode().width * 0.065, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "Edit", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White);
+
+    resultText.setPosition(sf::Vector2f(sf::VideoMode::getDesktopMode().width * 0.03, sf::VideoMode::getDesktopMode().height * 0.1));
+    resultText.setCharacterSize(sf::VideoMode::getDesktopMode().height * 0.025);
+    resultText.setFillColor(sf::Color::White);
 }
 
 CommandMaker::CommandMaker(int clientSocket, json userData, std::string data) : container(Point(sf::VideoMode::getDesktopMode().width * 0.1 + 9, sf::VideoMode::getDesktopMode().height * 0.07), sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height * 0.93),
@@ -83,6 +90,9 @@ CommandMaker::CommandMaker(int clientSocket, json userData, std::string data) : 
 
     runCommand = Button(Point(sf::VideoMode().getDesktopMode().width * 0.92, sf::VideoMode().getDesktopMode().height * 0.07), sf::VideoMode::getDesktopMode().width * 0.08, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Run", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
     runCommandLocally = Button(Point(sf::VideoMode().getDesktopMode().width * 0.8 - 9, sf::VideoMode().getDesktopMode().height * 0.07), sf::VideoMode::getDesktopMode().width * 0.12, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Run locally", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
+
+    closeRunResultScreen = Button(Point(sf::VideoMode().getDesktopMode().width * 0.92, sf::VideoMode().getDesktopMode().height * 0.95), sf::VideoMode::getDesktopMode().width * 0.08, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Close", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
+    openResultInBrowser = Button(Point(sf::VideoMode().getDesktopMode().width * 0.76 - 9, sf::VideoMode().getDesktopMode().height * 0.95), sf::VideoMode::getDesktopMode().width * 0.16, sf::VideoMode::getDesktopMode().height * 0.04, sf::VideoMode::getDesktopMode().height * 0.025, "Open in browser", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, sf::Color(79, 61, 194), sf::Color::White, true);
 
     commands[++commandsLength] = Command("", Point(sf::VideoMode().getDesktopMode().width * 0.1, sf::VideoMode().getDesktopMode().height * 0.45), ++commandId);
     commands[++commandsLength] = Command("", Point(sf::VideoMode().getDesktopMode().width, sf::VideoMode().getDesktopMode().height * 0.45), ++commandId);
@@ -110,6 +120,10 @@ CommandMaker::CommandMaker(int clientSocket, json userData, std::string data) : 
     deleteComponent = Button(Point(sf::VideoMode().getDesktopMode().width * 0.1 + 9, sf::VideoMode::getDesktopMode().height * 0.95 - 9), sf::VideoMode::getDesktopMode().width * 0.065, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "Delete", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White);
     editComponent = Button(Point(sf::VideoMode().getDesktopMode().width * 0.16 + 27, sf::VideoMode::getDesktopMode().height * 0.95 - 9), sf::VideoMode::getDesktopMode().width * 0.065, sf::VideoMode::getDesktopMode().height * 0.05, sf::VideoMode::getDesktopMode().height * 0.03, "Edit", sf::Color::White, sf::Color::White, sf::Color::Transparent, sf::Color::White, sf::Color(79, 61, 194), sf::Color::White);
 
+    resultText.setPosition(sf::Vector2f(sf::VideoMode::getDesktopMode().width * 0.03, sf::VideoMode::getDesktopMode().height * 0.1));
+    resultText.setCharacterSize(sf::VideoMode::getDesktopMode().height * 0.025);
+    resultText.setFillColor(sf::Color::White);
+
     json dt = json::parse(data);
     commandId = dt["biggestID"];
 
@@ -129,7 +143,12 @@ CommandMaker::CommandMaker(int clientSocket, json userData, std::string data) : 
 
 void CommandMaker::onMouseMove(sf::Vector2f mousePos)
 {
-    if (isCommandModalOpened)
+    if (isRunResultScreenVisible)
+    {
+        closeRunResultScreen.onMouseMove(mousePos);
+        openResultInBrowser.onMouseMove(mousePos);
+    }
+    else if (isCommandModalOpened)
     {
 
         commandModal.onMouseMove(mousePos);
@@ -208,9 +227,22 @@ void CommandMaker::onMouseRightPress(sf::Vector2f mousePos, sf::RenderWindow &wi
     }
 }
 
-void CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
+std::string CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
 {
-    if (runCommand.onMousePress(mousePos) || runCommandLocally.onMousePress(mousePos))
+    if (mousePos.x <= sf::VideoMode().getDesktopMode().width * 0.1 && mousePos.y <= sf::VideoMode().getDesktopMode().height * 0.07)
+    {
+        return "returnToMenu";
+    }
+    else if (isRunResultScreenVisible)
+    {
+        if (closeRunResultScreen.onMousePress(mousePos))
+            isRunResultScreenVisible = false, hasPreparedOutput = false;
+        else if (openResultInBrowser.onMousePress(mousePos))
+        {
+            system(commandForWebPreview.c_str());
+        }
+    }
+    else if (runCommand.onMousePress(mousePos) || runCommandLocally.onMousePress(mousePos))
     {
         json reqJson;
         reqJson["reqType"] = "runCommand";
@@ -251,6 +283,7 @@ void CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
         printf("%s\n", res.dump().c_str());
         isRunResultScreenVisible = true;
         toShowResult = res["response"];
+        commandForWebPreview = res["commandForWebPreview"];
         printf("%s", toShowResult.c_str());
     }
     else if (isCommandModalOpened)
@@ -589,6 +622,7 @@ void CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
             }
         }
     }
+    return "";
 }
 
 void CommandMaker::onMouseRelease(sf::Vector2f mousePos)
@@ -735,33 +769,33 @@ void CommandMaker::draw(sf::RenderWindow &win, sf::Font font)
     if (isRunResultScreenVisible)
     {
         runResultContainer.drawCustom(Point(0, 0), 0, 1, win, sf::Color::Black, sf::Color::Black);
-        sf::Text resultText;
-        resultText.setPosition(sf::Vector2f(sf::VideoMode::getDesktopMode().width * 0.03, sf::VideoMode::getDesktopMode().height * 0.1));
-        resultText.setCharacterSize(sf::VideoMode::getDesktopMode().height * 0.03);
-        resultText.setFillColor(sf::Color::White);
         resultText.setFont(font);
-        resultText.setString(toShowResult);
-        int maxRightPos = sf::VideoMode::getDesktopMode().width * 0.97;
-        bool isInScreen = false;
-        while (!isInScreen)
+        if (hasPreparedOutput == false)
         {
-            bool isAllInScreen = true;
-            for (std::string::size_type i = 0; i < toShowResult.size() && isAllInScreen == true; i++)
+            int maxRightPos = sf::VideoMode::getDesktopMode().width * 0.97;
+            bool isInScreen = false;
+            while (!isInScreen)
             {
-                if (resultText.findCharacterPos(i).x > maxRightPos)
+                bool isAllInScreen = true;
+                for (std::string::size_type i = 0; i < toShowResult.size() && isAllInScreen == true; i++)
                 {
-                    printf("%ld\n", i);
-                    toShowResult.insert(i - 2, 1, '\n');
-                    resultText.setString(toShowResult);
-                    isAllInScreen = false;
+                    if (resultText.findCharacterPos(i).x > maxRightPos)
+                    {
+                        printf("%ld\n", i);
+                        toShowResult.insert(i - 2, 1, '\n');
+                        resultText.setString(toShowResult);
+                        isAllInScreen = false;
+                    }
                 }
+                if (isAllInScreen == true)
+                    isInScreen = true;
             }
-            if (isAllInScreen == true)
-                isInScreen = true;
         }
-
         resultText.setString(sf::String::fromUtf8(toShowResult.begin(), toShowResult.end()));
+        hasPreparedOutput = true;
         win.draw(resultText);
+        closeRunResultScreen.drawCustom(win, font);
+        openResultInBrowser.drawCustom(win, font);
     }
     else
     {

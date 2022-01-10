@@ -88,12 +88,20 @@ class CommandMaker
 
     Button runCommand;
     Button runCommandLocally;
+
+    Button closeRunResultScreen;
+    Button openResultInBrowser;
+
     bool isRunnable = false;
 
     std::string toRunCommand;
     bool isRunResultScreenVisible = false;
 
     std::string toShowResult="";
+    std::string commandForWebPreview="";
+    bool hasPreparedOutput=false;
+
+    sf::Text resultText;
 
 public:
     std::string generalCommandName = "";
@@ -103,7 +111,7 @@ public:
     CommandMaker(int clientSocket, json userData, std::string data);
     void onMouseMove(sf::Vector2f mousePos);
     void onMouseRightPress(sf::Vector2f mousePos, sf::RenderWindow &win);
-    void onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win);
+    std::string onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win);
     void onMouseRelease(sf::Vector2f mousePos);
     void onTextEntered(sf::Event e);
     void draw(sf::RenderWindow &win, sf::Font font);

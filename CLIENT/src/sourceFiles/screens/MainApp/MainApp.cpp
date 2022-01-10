@@ -139,6 +139,11 @@ void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
         int menuRes = menu.onMousePress(mousePos);
         if (menuRes == 0)
         {
+            commandMaker = CommandMaker(clientSocket, userData);
+            screen = 2;
+        }
+        else if (menuRes == 1)
+        {
             commandMaker = CommandMaker(clientSocket, userData, "{\"biggestID\":12,\"commands\":[{\"commandName\":\"mkdir\",\"id\":3,\"parameters\":\"RDCFINALTEST5\",\"requiresAndOp\":true,\"rotationAngle\":0,\"scale\":1.0,\"x\":293,\"y\":150},{\"commandName\":\"touch\",\"id\":4,\"parameters\":\"test1.txt\",\"requiresAndOp\":true,\"rotationAngle\":0,\"scale\":1.0,\"x\":538,\"y\":141},{\"commandName\":\"touch\",\"id\":5,\"parameters\":\"test2.txt\",\"requiresAndOp\":true,\"rotationAngle\":0,\"scale\":1.0,\"x\":823,\"y\":142},{\"commandName\":\"touch\",\"id\":6,\"parameters\":\"test3.txt\",\"requiresAndOp\":true,\"rotationAngle\":0,\"scale\":1.0,\"x\":1132,\"y\":140},{\"commandName\":\"touch\",\"id\":7,\"parameters\":\"test4.txt\",\"requiresAndOp\":true,\"rotationAngle\":0,\"scale\":1.0,\"x\":1435,\"y\":144},{\"commandName\":\"ls\",\"id\":8,\"parameters\":\"\",\"requiresAndOp\":true,\"rotationAngle\":0,\"scale\":1.0,\"x\":1651,\"y\":144},{\"commandName\":\"cd\",\"id\":10,\"parameters\":\"~\",\"requiresAndOp\":false,\"rotationAngle\":0,\"scale\":1.0,\"x\":269,\"y\":273},{\"commandName\":\"grep\",\"id\":11,\"parameters\":\"test\",\"requiresAndOp\":false,\"rotationAngle\":0,\"scale\":1.0,\"x\":1690,\"y\":472},{\"commandName\":\"cd\",\"id\":12,\"parameters\":\"RDCFINALTEST5\",\"requiresAndOp\":true,\"rotationAngle\":0,\"scale\":1.0,\"x\":449,\"y\":253}],\"connections\":[{\"connectionInID\":10,\"connectionOutID\":0},{\"connectionInID\":3,\"connectionOutID\":10},{\"connectionInID\":5,\"connectionOutID\":4},{\"connectionInID\":6,\"connectionOutID\":5},{\"connectionInID\":7,\"connectionOutID\":6},{\"connectionInID\":8,\"connectionOutID\":7},{\"connectionInID\":1,\"connectionOutID\":11},{\"connectionInID\":11,\"connectionOutID\":8},{\"connectionInID\":4,\"connectionOutID\":12},{\"connectionInID\":12,\"connectionOutID\":3}]}");
             screen = 2;
         }
@@ -151,7 +156,10 @@ void MainApp::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &win)
     }
     else if (screen == 2)
     {
-        commandMaker.onMousePress(mousePos, win);
+        if (commandMaker.onMousePress(mousePos, win) == "returnToMenu")
+        {
+            screen = 1;
+        }
     }
 }
 
