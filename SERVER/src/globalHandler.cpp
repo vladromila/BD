@@ -212,7 +212,7 @@ std::string runCommand(std::string email, std::string execDate, std::string trc,
     while (getline(outputFile, row))
     {
         finalRes += row;
-        finalRes+='\n';
+        finalRes += '\n';
     }
     outputFile.close();
 
@@ -223,7 +223,7 @@ std::string runCommand(std::string email, std::string execDate, std::string trc,
     while (getline(errorFile, row))
     {
         finalRes += row;
-        finalRes+='\n';
+        finalRes += '\n';
     }
     errorFile.close();
 
@@ -232,11 +232,11 @@ std::string runCommand(std::string email, std::string execDate, std::string trc,
     resultFile << finalRes;
 
     resultFile.close();
-    res["response"]=finalRes;
-    res["commandForWebPreview"]="xdg-open http://167.172.38.89/executions/"+uID+"/"+execDate+"/result.txt";
-    std::string fres=std::to_string(res.dump().length()+1);
-    fres+='~';
-    fres+=res.dump();
+    res["response"] = finalRes;
+    res["commandForWebPreview"] = "xdg-open http://167.172.38.89/executions/" + uID + "/" + execDate + "/result.txt";
+    std::string fres = std::to_string(res.dump().length() + 1);
+    fres += '~';
+    fres += res.dump();
     return fres;
 }
 
@@ -416,6 +416,95 @@ std::string login(std::string email, std::string password, MYSQL *con)
     }
 }
 
+std::string updateUser(std::string oldEmail, std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
+{
+    json res = {
+        {"success", false},
+        {"emailError", ""},
+        {"firstNameError", ""},
+        {"lastNameError", ""},
+        {"passwordError", ""},
+        {"passwordConfirmError", ""}};
+    bool isAnyError = false;
+    if (!isEmailValid(email))
+    {
+        res["emailError"] = "Invalid email address format.";
+        isAnyError = true;
+    }
+    else
+    {
+        MYSQL_RES *dbRes;
+        char initial_query[1024];
+        int initial_query_stat;
+        sprintf(initial_query, "SELECT email FROM users WHERE email='%s'", email.c_str());
+
+        mysql_query(con, initial_query);
+        dbRes = mysql_store_result(con);
+
+        if (mysql_num_rows(dbRes))
+        {
+            res["emailError"] = "A user with this email address already exists.";
+            return res.dump();
+        }
+    }
+
+    if (firstName.size() < 4)
+    {
+        res["firstNameError"] = "The first name is too short.";
+        isAnyError = true;
+    }
+
+    if (lastName.size() < 4)
+    {
+        res["lastNameError"] = "The last name is too short.";
+        isAnyError = true;
+    }
+    bool updatePassword = true;
+    if (password.size() > 0)
+    {
+        if (password.size() < 4)
+        {
+            res["passwordError"] = "The entered password is too short.";
+            isAnyError = true;
+        }
+
+        if (password != passwordConfirm)
+        {
+            res["passwordConfirmError"] = "The passwords do not match.";
+            isAnyError = true;
+        }
+    }
+    else
+    {
+        updatePassword = false;
+    }
+    if (isAnyError == true)
+    {
+        return res.dump();
+    }
+
+    char hashedPassword[65];
+    sha256_string(password.c_str(), hashedPassword);
+    char query[1024];
+    int query_stat;
+    if (updatePassword == true)
+        sprintf(query, "UPDATE users SET email='%s', firstName='%s', lastName='%s', password='%s' WHERE email='%s'", email.c_str(), firstName.c_str(), lastName.c_str(), hashedPassword, oldEmail.c_str());
+    else
+        sprintf(query, "UPDATE users SET email='%s', firstName='%s', lastName='%s' WHERE email='%s'", email.c_str(), firstName.c_str(), lastName.c_str(), oldEmail.c_str());
+
+    query_stat = mysql_query(con, query);
+    if (query_stat != 0)
+    {
+        res["passwordConfirm"] = "Error updating user. Try again later.";
+        return res.dump();
+    }
+    else
+    {
+        res["success"] = true;
+        return res.dump();
+    }
+}
+
 std::string registerUser(std::string email, std::string password, std::string passwordConfirm, std::string firstName, std::string lastName, MYSQL *con)
 {
     json res = {
@@ -547,7 +636,9 @@ std::string requestHandler(char *r, MYSQL *con)
     }
     else
     {
-        if (req["reqType"] == "register")
+        if (req["reqType"] == "updateUser")
+            return updateUser(req["oldEmail"], req["email"], req["password"], req["passwordConfirm"], req["firstName"], req["lastName"], con);
+        else if (req["reqType"] == "register")
             return registerUser(req["email"], req["password"], req["passwordConfirm"], req["firstName"], req["lastName"], con);
         else if (req["reqType"] == "loginWithToken")
             return loginWithToken(req["email"], req["session_token"], con);
