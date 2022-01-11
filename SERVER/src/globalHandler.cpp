@@ -86,6 +86,71 @@ void sha256_string(const char *string, char outputBuffer[65])
     outputBuffer[64] = 0;
 }
 
+std::string getUserCommands(std::string email, MYSQL *con)
+{
+    json res = {
+        {"success", false},
+        {"runError", ""}};
+    MYSQL_RES *dbRes;
+    char initial_query[1024];
+    int initial_query_stat;
+
+    sprintf(initial_query, "SELECT id FROM users WHERE email='%s'", email.c_str());
+
+    mysql_query(con, initial_query);
+    dbRes = mysql_store_result(con);
+
+    MYSQL_ROW userId = mysql_fetch_row(dbRes);
+    std::string uID = std::string(userId[0]);
+
+    bzero(initial_query, sizeof(initial_query));
+    mysql_free_result(dbRes);
+
+    sprintf(initial_query, "SELECT id,name FROM commands WHERE user_id='%s' ORDER BY date DESC", uID.c_str());
+
+    mysql_query(con, initial_query);
+    dbRes = mysql_store_result(con);
+
+    MYSQL_ROW row;
+
+    auto commands = json::array();
+
+    while ((row = mysql_fetch_row(dbRes)))
+    {
+        json command;
+        command["id"] = std::string(row[0]);
+        command["name"] = std::string(row[1]);
+        commands.push_back(command);
+    }
+    res["commands"] = commands;
+    res["success"] = true;
+    return res.dump();
+}
+
+std::string getUserCommand(std::string id, MYSQL *con)
+{
+    json res = {
+        {"success", false},
+        {"runError", ""}};
+    MYSQL_RES *dbRes;
+    char initial_query[1024];
+    int initial_query_stat;
+
+    sprintf(initial_query, "SELECT data FROM commands WHERE id='%s'", id.c_str());
+
+    mysql_query(con, initial_query);
+    dbRes = mysql_store_result(con);
+
+    MYSQL_ROW commD = mysql_fetch_row(dbRes);
+    std::string commData = std::string(commD[0]);
+
+    bzero(initial_query, sizeof(initial_query));
+    mysql_free_result(dbRes);
+    res["command"] = commData;
+    res["success"] = true;
+    return res.dump();
+}
+
 std::string runCommand(std::string email, std::string execDate, std::string trc, MYSQL *con)
 {
     json res = {
@@ -636,7 +701,11 @@ std::string requestHandler(char *r, MYSQL *con)
     }
     else
     {
-        if (req["reqType"] == "updateUser")
+        if (req["reqType"] == "getUserCommand")
+            return getUserCommand(req["id"], con);
+        else if (req["reqType"] == "getUserCommands")
+            return getUserCommands(req["email"], con);
+        else if (req["reqType"] == "updateUser")
             return updateUser(req["oldEmail"], req["email"], req["password"], req["passwordConfirm"], req["firstName"], req["lastName"], con);
         else if (req["reqType"] == "register")
             return registerUser(req["email"], req["password"], req["passwordConfirm"], req["firstName"], req["lastName"], con);
