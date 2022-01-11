@@ -1,12 +1,17 @@
 #include "../../../sourceFiles/screens/Authentication/Authentication.cpp"
 #include "../../../sourceFiles/screens/MainApp/Menu.cpp"
 #include "../../../sourceFiles/screens/MainApp/CommandMaker.cpp"
+#include "../../../sourceFiles/screens/MainApp/EditProfile.cpp"
+#include "../../../sourceFiles/screens/MainApp/SavedCommands.cpp"
+
 
 class MainApp
 {
     Authentication auth;
     Menu menu;
     CommandMaker commandMaker;
+    EditProfile editProfile;
+    SavedCommands savedCommands;
 
     int clientSocket;
     int screen = -1;

@@ -1,4 +1,5 @@
 #include "../../../headers/screens/MainApp/CommandMaker.h"
+#include <sys/stat.h>
 
 std::wstring to_wide(const std::string &multi)
 {
@@ -126,6 +127,8 @@ CommandMaker::CommandMaker(int clientSocket, json userData, std::string data) : 
 
     json dt = json::parse(data);
     commandId = dt["biggestID"];
+    generalCommandId=dt["generalCommandId"];
+    generalCommandName=dt["generalCommandName"];
 
     for (const auto &item : dt["commands"].items())
     {
@@ -139,6 +142,122 @@ CommandMaker::CommandMaker(int clientSocket, json userData, std::string data) : 
         connections[++connectionsLength].connectionInID = item.value()["connectionInID"];
         connections[connectionsLength].connectionOutID = item.value()["connectionOutID"];
     }
+}
+
+void runCommandLocallyHelper(std::string trc,std::string &toShwoResult, std::string &commandForWebPreview, bool &isRunResultScreenVisible)
+{
+    time_t _tm = time(NULL);
+    struct tm *curtime = localtime(&_tm);
+    std::string execDate = std::string(asctime(curtime));
+
+    execDate.pop_back();
+    execDate.erase(remove_if(execDate.begin(), execDate.end(), isspace), execDate.end());
+
+    bool rootFolderExists = false;
+    bool commandExecutionExists = false;
+    char homeDir[256];
+    strcpy(homeDir, getenv("HOME"));
+    strcat(homeDir, "/DDP");
+    struct stat st;
+    if (stat(homeDir, &st) == 0)
+    {
+        if (!(st.st_mode & S_IFDIR != 0))
+        {
+            rootFolderExists = false;
+        }
+        else
+            rootFolderExists = true;
+    }
+    else
+    {
+        rootFolderExists = false;
+    }
+
+    if (rootFolderExists)
+        printf("Root folder exists.\n");
+    else
+    {
+        const int dir_err = mkdir(homeDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (-1 == dir_err)
+        {
+            printf("Error creating root folder.\n");
+        }
+        else
+            printf("Root folder created.\n");
+    }
+    strcat(homeDir, "/");
+    strcat(homeDir, execDate.c_str());
+    const int dir_err = mkdir(homeDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (-1 == dir_err)
+    {
+        printf("Error creating execution folder.\n");
+    }
+    else
+        printf("Execution folder created.\n");
+    char outputPath[512];
+    char errorPath[512];
+    char resultPath[512];
+
+    strcpy(outputPath, homeDir);
+    strcpy(errorPath, homeDir);
+    strcpy(resultPath, homeDir);
+    strcat(outputPath, "/output.txt");
+    strcat(errorPath, "/error.txt");
+    strcat(resultPath, "/result.txt");
+
+    strcat(homeDir, "/command.sh");
+
+    std::fstream executionFile;
+    executionFile.open(homeDir, std::ios::out);
+    executionFile << trc.c_str();
+    executionFile.close();
+
+    std::string toRunCommand;
+    // toRunCommand+="chmod 777 ";
+    // toRunCommand+=std::string(homeDir);
+    toRunCommand += "sh ";
+    toRunCommand += std::string(homeDir);
+    toRunCommand += " >";
+    toRunCommand += std::string(outputPath);
+    toRunCommand += " 2>";
+    toRunCommand += std::string(errorPath);
+    printf("%s\n", toRunCommand.c_str());
+    system(toRunCommand.c_str());
+
+    std::string finalRes;
+    std::string row;
+
+    std::fstream outputFile;
+    outputFile.open(outputPath, std::ios::in);
+
+    while (getline(outputFile, row))
+    {
+        finalRes += row;
+        finalRes += '\n';
+    }
+    outputFile.close();
+
+    std::fstream errorFile;
+
+    errorFile.open(errorPath, std::ios::in);
+
+    while (getline(errorFile, row))
+    {
+        finalRes += row;
+        finalRes += '\n';
+    }
+    errorFile.close();
+
+    printf("%s\n", finalRes.c_str());
+
+    toShwoResult=finalRes;
+    std::fstream resultFile;
+    resultFile.open(resultPath, std::ios::out);
+    resultFile << finalRes;
+
+    resultFile.close();
+    commandForWebPreview = "xdg-open " + std::string(resultPath);
+    isRunResultScreenVisible = true;
 }
 
 void CommandMaker::onMouseMove(sf::Vector2f mousePos)
@@ -244,47 +363,54 @@ std::string CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &
     }
     else if (runCommand.onMousePress(mousePos) || runCommandLocally.onMousePress(mousePos))
     {
-        json reqJson;
-        reqJson["reqType"] = "runCommand";
-        reqJson["toRunCommand"] = toRunCommand;
-        time_t _tm = time(NULL);
-        struct tm *curtime = localtime(&_tm);
-        std::string dateString = std::string(asctime(curtime));
-
-        dateString.pop_back();
-        dateString.erase(remove_if(dateString.begin(), dateString.end(), isspace), dateString.end());
-
-        reqJson["execDate"] = dateString;
-        reqJson["email"] = userData["email"];
-
-        std::string req = std::to_string(reqJson.dump().length() + 1);
-        req += '~';
-        req += reqJson.dump();
-        send(clientSocket, req.c_str(), req.length() + 1, 0);
-        char nr[10];
-        char buffer[100000];
-        recv(clientSocket, buffer, 1, 0);
-        while (buffer[0] != '~')
+        if (runCommand.onMousePress(mousePos) == true)
         {
-            buffer[1] = '\0';
-            strcat(nr, buffer);
-            bzero(buffer, sizeof(buffer));
+            json reqJson;
+            reqJson["reqType"] = "runCommand";
+            reqJson["toRunCommand"] = toRunCommand;
+            time_t _tm = time(NULL);
+            struct tm *curtime = localtime(&_tm);
+            std::string dateString = std::string(asctime(curtime));
+
+            dateString.pop_back();
+            dateString.erase(remove_if(dateString.begin(), dateString.end(), isspace), dateString.end());
+
+            reqJson["execDate"] = dateString;
+            reqJson["email"] = userData["email"];
+
+            std::string req = std::to_string(reqJson.dump().length() + 1);
+            req += '~';
+            req += reqJson.dump();
+            send(clientSocket, req.c_str(), req.length() + 1, 0);
+            char nr[10];
+            char buffer[1048576];
             recv(clientSocket, buffer, 1, 0);
+            while (buffer[0] != '~')
+            {
+                buffer[1] = '\0';
+                strcat(nr, buffer);
+                bzero(buffer, sizeof(buffer));
+                recv(clientSocket, buffer, 1, 0);
+            }
+            bzero(buffer, sizeof(buffer));
+
+            // printf("%s\n", nr);
+
+            int bufSize = atoi(nr);
+            bzero(nr, sizeof(nr));
+
+            recv(clientSocket, buffer, 1048576, 0);
+            json res = json::parse(buffer);
+            printf("%s\n", res.dump().c_str());
+            isRunResultScreenVisible = true;
+            toShowResult = res["response"];
+            commandForWebPreview = res["commandForWebPreview"];
+            printf("%s", toShowResult.c_str());
         }
-        bzero(buffer, sizeof(buffer));
-
-        // printf("%s\n", nr);
-
-        int bufSize = atoi(nr);
-        bzero(nr, sizeof(nr));
-
-        recv(clientSocket, buffer, bufSize + 1, 0);
-        json res = json::parse(buffer);
-        printf("%s\n", res.dump().c_str());
-        isRunResultScreenVisible = true;
-        toShowResult = res["response"];
-        commandForWebPreview = res["commandForWebPreview"];
-        printf("%s", toShowResult.c_str());
+        else if (runCommandLocally.onMousePress(mousePos) == true)
+        {
+            runCommandLocallyHelper(toRunCommand, toShowResult, commandForWebPreview, isRunResultScreenVisible);
+        }
     }
     else if (isCommandModalOpened)
     {
@@ -333,6 +459,7 @@ std::string CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &
                     comm["rotationAngle"] = commands[i].rotationAngle;
                     comm["commandName"] = commands[i].commandName;
                     comm["parameters"] = commands[i].parameters;
+                    comm["requiresAndOp"] = commands[i].requiresAndOp;
                     comm["x"] = commands[i].topLeftCorner.x;
                     comm["y"] = commands[i].topLeftCorner.y;
                     comm["id"] = commands[i].id;
@@ -406,6 +533,7 @@ std::string CommandMaker::onMousePress(sf::Vector2f mousePos, sf::RenderWindow &
                         comm["rotationAngle"] = commands[i].rotationAngle;
                         comm["commandName"] = commands[i].commandName;
                         comm["parameters"] = commands[i].parameters;
+                        comm["requiresAndOp"] = commands[i].requiresAndOp;
                         comm["x"] = commands[i].topLeftCorner.x;
                         comm["y"] = commands[i].topLeftCorner.y;
                         comm["id"] = commands[i].id;

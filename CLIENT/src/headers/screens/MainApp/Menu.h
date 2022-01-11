@@ -8,6 +8,8 @@ class Menu{
     Button savedCommandsButton;
     Point exitButtonOrigin;
     Button exitButton;
+    Point profileButtonOrigin;
+    Button profileButton;
     Point menuTitleOrigin;
     Word menuTitle;
 public:

@@ -109,10 +109,12 @@ std::string deleteUserCommand(std::string email, std::string commandId, MYSQL *c
     sprintf(initial_query, "DELETE FROM commands WHERE id='%s'", commandId.c_str());
 
     mysql_query(con, initial_query);
+    
     bzero(initial_query, sizeof(initial_query));
-    mysql_free_result(dbRes);
 
     sprintf(initial_query, "SELECT id,name FROM commands WHERE user_id='%s' ORDER BY date DESC", uID.c_str());
+
+    mysql_query(con, initial_query);
 
     dbRes = mysql_store_result(con);
 
@@ -128,6 +130,7 @@ std::string deleteUserCommand(std::string email, std::string commandId, MYSQL *c
         commands.push_back(command);
     }
     res["commands"] = commands;
+    printf("%s\n",commands.dump().c_str());
     res["success"] = true;
     return res.dump();
 }
